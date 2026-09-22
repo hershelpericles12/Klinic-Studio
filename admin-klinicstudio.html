@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Klinic Studio — Espace admin</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;1,600&family=EB+Garamond:ital,wght@0,400;0,500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --rose-gold:#B01760; --rose-gold-light:#C85D90;
+    --bg:#050505; --panel:#0c0b0b; --panel-2:#141212;
+    --ivory:#f2e9e6; --ivory-muted:rgba(242,233,230,0.6); --line:rgba(216,165,150,0.18);
+    --serif:'EB Garamond', Georgia, serif; --display:'Playfair Display', Georgia, serif;
+    --radius:16px;
+  }
+  *{ margin:0; padding:0; box-sizing:border-box; }
+  body{ background:var(--bg); color:var(--ivory); font-family:var(--serif); min-height:100vh; }
+  a{ color:inherit; }
+  button, input, select, textarea{ font-family:inherit; }
+
+  /* ---- login gate ---- */
+  #authGate{
+    min-height:100vh; display:flex; align-items:center; justify-content:center; padding:2rem;
+  }
+  .auth-card{
+    width:100%; max-width:380px; background:var(--panel); border:1px solid var(--line);
+    border-radius:24px; padding:2.4rem 2rem; text-align:center;
+  }
+  .auth-mark{ width:min(70%, 220px); height:auto; margin:0 auto 1.2rem; stroke:var(--rose-gold); fill:none; display:block; }
+  .auth-title{ font-family:var(--display); font-style:italic; font-size:1.5rem; margin-bottom:0.3rem; }
+  .auth-sub{ color:var(--ivory-muted); font-size:0.86rem; margin-bottom:1.6rem; }
+  .auth-card input{
+    width:100%; background:var(--panel-2); border:1px solid var(--line); border-radius:10px;
+    padding:0.75rem 1rem; color:var(--ivory); margin-bottom:0.9rem; font-size:0.92rem;
+  }
+  .auth-card input:focus{ outline:none; border-color:var(--rose-gold); }
+  .auth-btn{
+    width:100%; background:var(--rose-gold); color:#1a0f0c; border:none; border-radius:999px;
+    padding:0.8rem; font-size:0.92rem; cursor:pointer; transition:background 0.2s ease;
+  }
+  .auth-btn:hover{ background:var(--rose-gold-light); }
+  .auth-error{ color:#e0a0a0; font-size:0.82rem; margin-top:0.8rem; min-height:1em; }
+  .auth-checking{ color:var(--ivory-muted); font-size:0.9rem; }
+
+  /* ---- dashboard shell ---- */
+  #dashboard{ display:none; min-height:100vh; grid-template-columns:240px 1fr; }
+  #dashboard.show{ display:grid; }
+  .sidebar{
+    background:var(--panel); border-right:1px solid var(--line);
+    padding:2rem 1.4rem; display:flex; flex-direction:column; gap:0.4rem;
+  }
+  .sidebar-brand{ display:flex; flex-direction:column; align-items:flex-start; gap:0.5rem; margin-bottom:2rem; }
+  .sidebar-brand svg{ width:100%; max-width:150px; height:auto; stroke:var(--rose-gold); fill:none; }
+  .sidebar-brand span{ font-family:var(--display); font-style:italic; font-size:1rem; }
+  .nav-item{
+    text-align:left; background:none; border:none; color:var(--ivory-muted);
+    padding:0.7rem 0.9rem; border-radius:10px; font-size:0.9rem; cursor:pointer;
+    display:flex; align-items:center; gap:0.6rem;
+  }
+  .nav-item.active, .nav-item:hover{ background:rgba(216,165,150,0.1); color:var(--ivory); }
+  .sidebar-footer{ margin-top:auto; }
+  .logout-btn{
+    background:none; border:1px solid var(--line); color:var(--ivory-muted); border-radius:999px;
+    padding:0.6rem 1rem; font-size:0.82rem; cursor:pointer; width:100%;
+  }
+  .logout-btn:hover{ border-color:var(--rose-gold); color:var(--rose-gold); }
+  .back-site{ font-size:0.78rem; color:var(--ivory-muted); margin-top:0.8rem; display:block; text-align:center; }
+  .back-site:hover{ color:var(--rose-gold); }
+
+  .main{ padding:2.4rem clamp(1.2rem, 3vw, 3rem); }
+  .panel{ display:none; }
+  .panel.active{ display:block; }
+  .panel-head{ display:flex; align-items:center; justify-content:space-between; margin-bottom:1.6rem; flex-wrap:wrap; gap:1rem; }
+  .panel-title{ font-family:var(--display); font-style:italic; font-size:1.6rem; }
+  .panel-sub{ color:var(--ivory-muted); font-size:0.86rem; margin-top:0.2rem; }
+
+  .btn{
+    display:inline-flex; align-items:center; gap:0.4rem; background:var(--rose-gold); color:#1a0f0c;
+    border:none; border-radius:999px; padding:0.65rem 1.2rem; font-size:0.86rem; cursor:pointer;
+    transition:background 0.2s ease;
+  }
+  .btn:hover{ background:var(--rose-gold-light); }
+  .btn-outline{ background:none; border:1px solid var(--line); color:var(--ivory-muted); }
+  .btn-outline:hover{ border-color:var(--rose-gold); color:var(--rose-gold); }
+
+  /* ---- catalog table ---- */
+  .table-wrap{ background:var(--panel); border:1px solid var(--line); border-radius:var(--radius); overflow-x:auto; }
+  table{ width:100%; border-collapse:collapse; min-width:640px; }
+  th, td{ text-align:left; padding:0.9rem 1rem; font-size:0.86rem; border-bottom:1px solid var(--line); }
+  th{ color:var(--ivory-muted); font-weight:500; font-size:0.76rem; letter-spacing:0.03em; }
+  tr:last-child td{ border-bottom:none; }
+  .thumb{ width:42px; height:42px; border-radius:8px; object-fit:cover; background:var(--panel-2); }
+  .row-actions{ display:flex; gap:0.5rem; }
+  .icon-btn{
+    background:none; border:1px solid var(--line); color:var(--ivory-muted); border-radius:8px;
+    padding:0.35rem 0.6rem; font-size:0.76rem; cursor:pointer;
+  }
+  .icon-btn:hover{ border-color:var(--rose-gold); color:var(--rose-gold); }
+  .icon-btn.danger:hover{ border-color:#c97b7b; color:#e0a0a0; }
+  .empty-row td{ text-align:center; color:var(--ivory-muted); padding:2rem; }
+
+  /* ---- modal ---- */
+  .modal-overlay{
+    position:fixed; inset:0; background:rgba(0,0,0,0.6); display:none;
+    align-items:center; justify-content:center; z-index:300; padding:1.5rem;
+  }
+  .modal-overlay.show{ display:flex; }
+  .modal{
+    background:var(--panel); border:1px solid var(--line); border-radius:20px;
+    width:100%; max-width:480px; padding:1.8rem; max-height:88vh; overflow-y:auto;
+  }
+  .modal-title{ font-family:var(--display); font-style:italic; font-size:1.25rem; margin-bottom:1.2rem; }
+  .field{ display:flex; flex-direction:column; gap:0.35rem; margin-bottom:1rem; }
+  .field label{ font-size:0.78rem; color:var(--ivory-muted); }
+  .field input, .field select, .field textarea{
+    background:var(--panel-2); border:1px solid var(--line); border-radius:10px;
+    padding:0.65rem 0.85rem; color:var(--ivory); font-size:0.9rem;
+  }
+  .field input:focus, .field select:focus, .field textarea:focus{ outline:none; border-color:var(--rose-gold); }
+  .field textarea{ resize:vertical; min-height:70px; }
+  .modal-actions{ display:flex; gap:0.7rem; margin-top:1.2rem; justify-content:flex-end; flex-wrap:wrap; }
+  .modal-actions .btn{ flex:1 1 auto; justify-content:center; min-width:120px; }
+  .photo-list{ display:flex; flex-direction:column; gap:0.5rem; margin-top:0.7rem; }
+  .photo-row{
+    display:flex; align-items:center; gap:0.6rem; background:var(--panel-2);
+    border:1px solid var(--line); border-radius:10px; padding:0.5rem 0.6rem;
+  }
+  .photo-row img{ width:48px; height:48px; border-radius:8px; object-fit:cover; flex-shrink:0; }
+  .photo-row .cover-tag{
+    font-size:0.68rem; color:var(--rose-gold); border:1px solid var(--rose-gold); border-radius:999px;
+    padding:0.15rem 0.5rem; flex-shrink:0;
+  }
+  .photo-row .photo-row-actions{ display:flex; gap:0.3rem; margin-left:auto; flex-shrink:0; }
+  .photo-row .icon-btn{ padding:0.3rem 0.5rem; font-size:0.72rem; }
+  .photo-empty-hint{ font-size:0.78rem; color:var(--ivory-muted); opacity:0.75; padding:0.4rem 0; }
+  .field-hint{ font-size:0.72rem; color:var(--ivory-muted); opacity:0.75; }
+
+  .status-pill{
+    font-size:0.72rem; padding:0.25rem 0.6rem; border-radius:999px; border:1px solid var(--line);
+    color:var(--ivory-muted); text-transform:capitalize;
+  }
+
+  @media (max-width: 820px){
+    #dashboard.show{ grid-template-columns:1fr; }
+    .sidebar{
+      position:fixed; bottom:0; left:0; right:0; top:auto; flex-direction:row; border-right:none;
+      border-top:1px solid var(--line); padding:0.65rem 0.9rem; justify-content:flex-start;
+      align-items:center; gap:0.5rem; z-index:150; overflow-x:auto; -webkit-overflow-scrolling:touch;
+    }
+    .sidebar-brand{ display:none; }
+    .nav-item{ flex-shrink:0; white-space:nowrap; padding:0.6rem 0.85rem; }
+    .nav-item span{ display:inline; }
+    .sidebar-footer{
+      display:flex; flex-direction:row; align-items:center; gap:0.5rem;
+      margin-top:0; margin-left:0.3rem; padding-left:0.6rem; border-left:1px solid var(--line);
+      flex-shrink:0;
+    }
+    .logout-btn{ width:auto; white-space:nowrap; padding:0.55rem 0.9rem; }
+    .back-site{ margin-top:0; white-space:nowrap; }
+    .main{ padding-bottom:5.5rem; }
+  }
+  @media (max-width: 480px){
+    .auth-card{ padding:2rem 1.4rem; }
+    .modal{ padding:1.4rem; border-radius:16px; }
+    .panel-title{ font-size:1.35rem; }
+  }
+</style>
+</head>
+<body>
+
+  <!-- ============ LOGIN GATE ============ -->
+  <div id="authGate">
+    <div class="auth-card" id="authCard">
+      <svg class="auth-mark" viewBox="290 320 840 540" xmlns="http://www.w3.org/2000/svg">
+        <g transform="translate(130,280)" fill="none" stroke="var(--rose-gold)" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M 181,124 L 185,122 L 193,120 L 194,119 L 197,119 L 198,118 L 204,118 L 205,117 L 212,117 L 213,116 L 263,116 L 264,117 L 283,117 L 284,118 L 319,118 L 320,117 L 331,117 L 332,116 L 344,115 L 345,114 L 349,114 L 350,113 L 353,113 L 354,112 L 360,112 L 364,116" pathLength="1" stroke-width="4.0" style="--delay:0.000s"/>
+        <path d="M 232,358 L 232,364 L 233,365 L 233,368 L 234,369 L 234,371 L 235,372 L 235,374 L 237,378 L 239,380 L 241,384 L 250,393 L 251,393 L 256,397 L 258,397 L 262,399 L 265,399 L 266,400 L 287,400 L 288,399 L 296,397 L 304,393 L 306,391 L 309,390 L 311,388 L 315,386 L 328,373 L 328,372 L 334,365 L 335,362 L 338,359 L 339,356 L 341,354 L 342,350 L 349,337 L 349,335 L 352,330 L 352,328 L 354,324 L 355,317 L 356,316 L 357,310 L 358,309 L 359,303 L 360,302 L 360,298 L 361,297 L 361,291 L 362,290 L 362,286 L 363,285 L 364,270 L 366,267" pathLength="1" stroke-width="6.39" style="--delay:0.068s"/>
+        <path d="M 364,116 L 364,175 L 365,176 L 365,207 L 366,208 L 365,265 L 366,266" pathLength="1" stroke-width="16.0" style="--delay:0.135s"/>
+        <path d="M 367,102 L 366,103 L 365,115 L 364,116" pathLength="1" stroke-width="15.98" style="--delay:0.203s"/>
+        <path d="M 367,267 L 375,267" pathLength="1" stroke-width="18.0" style="--delay:0.271s"/>
+        <path d="M 367,101 L 367,98 L 368,97 L 368,89 L 370,85 L 371,78 L 374,74 L 377,68 L 380,65 L 382,64 L 385,64 L 386,63 L 388,64 L 393,64 L 395,65 L 399,69 L 399,71 L 400,72 L 400,77 L 399,78 L 399,81 L 396,87 L 385,98 L 383,98 L 380,101 L 377,101 L 376,102 L 368,102" pathLength="1" stroke-width="7.6" style="--delay:0.338s"/>
+        <path d="M 376,266 L 393,250 L 393,249 L 401,240 L 405,233 L 408,230 L 413,220 L 416,217 L 418,212 L 420,210 L 423,204 L 424,200 L 426,198 L 429,192 L 429,190 L 434,181 L 434,179 L 438,172 L 438,170 L 446,154 L 446,152 L 448,149 L 448,147 L 458,127 L 458,125 L 460,123 L 460,121 L 463,115 L 465,113 L 465,111 L 469,103 L 471,101 L 473,96 L 475,94 L 478,88 L 484,81 L 484,80 L 492,72 L 493,72 L 495,70 L 501,67 L 503,67 L 504,66 L 509,66 L 510,67 L 516,68 L 520,71 L 523,77 L 523,79 L 524,80 L 525,88" pathLength="1" stroke-width="11.59" style="--delay:0.406s"/>
+        <path d="M 493,392 L 491,394 L 479,394 L 478,393 L 474,393 L 473,392 L 471,392 L 463,388 L 461,386 L 458,385 L 451,379 L 450,379 L 429,358 L 429,357 L 425,353 L 425,352 L 422,349 L 422,348 L 414,337 L 406,321 L 404,319 L 380,271 L 376,267" pathLength="1" stroke-width="14.0" style="--delay:0.474s"/>
+        <path d="M 499,392 L 494,392" pathLength="1" stroke-width="19.38" style="--delay:0.542s"/>
+        <path d="M 499,392 L 504,387 L 510,385 L 534,361 L 534,360 L 539,355 L 539,354 L 546,346 L 546,345 L 550,340 L 552,335 L 555,332 L 558,325 L 560,323 L 561,318 L 563,316 L 565,312 L 565,310 L 567,307 L 568,301 L 570,298 L 570,296 L 572,292 L 572,287 L 573,286 L 573,282 L 574,281 L 574,266 L 573,265 L 573,261 L 569,254 L 564,250 L 562,250 L 561,249 L 557,249 L 556,248 L 550,248 L 549,249 L 544,249 L 543,250 L 541,250 L 538,252 L 534,253 L 532,255 L 528,257 L 525,260 L 524,260 L 511,273 L 511,274 L 503,284 L 497,296 L 497,298 L 494,303 L 494,305 L 493,306 L 493,308 L 491,312 L 491,316 L 490,317 L 490,321 L 489,322 L 489,327 L 488,328 L 488,333 L 487,334 L 487,362 L 488,363 L 489,373 L 490,374 L 490,377 L 491,378 L 491,381 L 492,382 L 492,388 L 493,389 L 493,391" pathLength="1" stroke-width="14.39" style="--delay:0.609s"/>
+        <path d="M 528,448 L 526,445 L 526,442 L 524,440 L 522,435 L 520,433 L 516,425 L 512,420 L 508,412 L 504,407 L 501,401 L 501,397 L 500,396 L 500,393 L 499,392" pathLength="1" stroke-width="15.18" style="--delay:0.677s"/>
+        <path d="M 530,449 L 536,443 L 541,442 L 549,436 L 552,435 L 554,433 L 557,432 L 564,427 L 569,425 L 571,423 L 587,415 L 589,415 L 592,413 L 594,413 L 599,409" pathLength="1" stroke-width="4.39" style="--delay:0.745s"/>
+        <path d="M 530,449 L 532,451 L 532,457 L 533,458 L 533,461 L 534,462 L 534,465 L 535,466 L 535,469 L 536,470 L 536,491 L 535,492 L 535,498 L 534,499 L 534,502 L 531,507 L 530,512 L 525,522 L 520,528 L 518,532 L 505,544 L 504,544 L 496,550 L 490,553 L 488,553 L 484,555 L 481,555 L 480,556 L 475,556 L 474,557 L 465,557 L 464,556 L 459,556 L 458,555 L 454,554 L 448,548 L 446,544 L 446,541 L 445,540 L 445,529 L 446,528 L 446,524 L 448,520 L 450,518 L 450,516 L 453,513 L 453,512 L 459,505 L 459,504 L 482,482 L 483,482 L 487,478 L 488,478 L 492,474 L 496,472 L 503,466 L 504,466 L 506,464 L 513,460 L 516,457 L 520,455 L 522,455 L 528,449" pathLength="1" stroke-width="8.0" style="--delay:0.812s"/>
+        </g>
+        <g transform="translate(730,440)">
+          <g transform="translate(0.000000,260.000000) scale(0.100000,-0.100000)" fill="var(--rose-gold)" stroke="none">
+            <path d="M2800 1598 c0 -5 -17 -9 -37 -8 -21 1 -40 1 -43 0 -3 -1 -30 -4 -60
+-6 -69 -5 -188 -27 -356 -64 -73 -17 -148 -30 -167 -30 -45 0 -52 -11 -31 -52
+52 -103 147 -134 269 -88 79 30 206 68 248 75 36 6 38 7 23 24 -22 24 -20 54
+5 77 20 18 21 18 40 -6 14 -18 18 -34 14 -57 -3 -17 -1 -34 5 -38 5 -3 10 -1
+10 4 0 7 24 11 60 11 33 0 60 -4 60 -9 0 -12 33 -9 42 4 5 7 14 6 28 -3 14 -8
+20 -9 20 -1 0 22 249 -27 359 -71 30 -11 56 -19 59 -16 34 35 -249 194 -400
+224 -45 9 -85 20 -88 23 -9 11 -60 17 -60 7z M1036 1580 c-117 -21 -331 -121
+-410 -191 -54 -48 -42 -57 36 -26 130 52 256 72 448 72 197 -1 259 -11 416
+-70 161 -61 254 -43 305 57 29 58 26 68 -24 68 -23 0 -96 13 -162 29 -244 60
+-485 84 -609 61z M2031 1462 c-1 -22 25 -76 45 -92 17 -14 16 -12 -2 20 -11
+19 -25 46 -32 60 -6 14 -11 19 -11 12z M3035 1080 c-3 -5 -17 -10 -29 -10 -15
+0 -26 -7 -29 -20 -3 -11 -12 -20 -21 -20 -9 0 -16 -4 -16 -10 0 -14 -39 -37
+-127 -76 -43 -18 -68 -34 -56 -34 25 0 131 37 151 53 10 8 16 7 23 -4 5 -8 9
+-9 9 -4 0 6 16 19 35 29 19 11 35 24 35 29 0 5 11 20 25 33 25 23 33 44 16 44
+-6 0 -13 -4 -16 -10z M788 1073 c-23 -6 -23 -17 4 -69 12 -24 18 -47 14 -51
+-4 -4 -37 -7 -74 -7 -65 0 -158 34 -177 64 -10 17 -35 11 -35 -8 0 -33 115
+-122 157 -122 7 0 13 -4 13 -10 0 -14 -46 -12 -108 3 -53 14 -62 13 -62 -9 0
+-15 89 -64 115 -64 29 0 15 -19 -17 -22 -81 -8 -16 -48 78 -48 54 0 72 -13 33
+-23 -45 -12 -13 -32 49 -32 67 0 73 -3 42 -23 -49 -30 22 -44 87 -17 45 19 44
+20 37 -15 -7 -34 5 -38 46 -15 32 18 40 18 40 0 0 -19 24 -19 40 0 16 19 40
+19 40 1 0 -27 21 -28 47 -5 18 17 27 20 30 12 6 -17 28 -16 42 1 7 8 39 17 71
+21 33 4 63 11 66 16 3 6 14 7 23 4 11 -3 25 3 36 15 10 11 23 20 30 20 45 0
+97 50 111 104 4 19 17 32 35 40 16 6 29 16 29 23 0 17 -9 16 -81 -2 -88 -23
+-231 -34 -318 -24 -89 10 -211 46 -218 66 -3 7 -9 13 -14 13 -19 0 -89 53 -89
+67 0 8 -13 20 -30 26 -16 6 -30 14 -30 18 0 16 -47 55 -62 52z M3116 1045
+c-11 -14 -25 -24 -33 -21 -7 3 -13 -1 -13 -9 0 -7 -9 -17 -20 -20 -11 -3 -20
+-12 -20 -20 0 -8 -9 -16 -19 -20 -11 -3 -34 -20 -52 -36 -18 -16 -38 -28 -45
+-25 -7 3 -15 -1 -17 -9 -8 -18 -88 -43 -180 -55 -88 -11 -245 1 -324 25 -26 8
+-56 15 -65 15 -27 0 -22 -19 8 -32 17 -8 34 -31 49 -64 21 -48 63 -84 98 -84
+6 0 18 -7 28 -16 9 -8 28 -17 41 -20 71 -12 146 -31 165 -42 12 -6 28 -9 37
+-6 8 3 25 -1 38 -10 31 -22 38 -20 38 9 0 31 3 31 41 3 29 -22 31 -22 43 -6
+12 17 16 17 44 2 38 -19 54 -11 46 22 -7 28 -7 28 39 9 46 -19 97 -20 97 -1 0
+8 -7 16 -15 20 -32 12 -12 21 47 21 71 0 87 17 34 35 -55 18 -43 26 32 22 71
+-4 126 10 120 31 -3 6 -19 13 -36 15 -44 4 -40 15 11 30 24 7 56 24 72 37 26
+21 28 24 12 30 -9 4 -37 2 -62 -4 -53 -13 -105 -14 -105 -2 0 5 13 12 29 16
+67 15 167 103 143 127 -8 8 -26 1 -60 -21 -54 -34 -138 -55 -189 -45 -44 8
+-50 20 -24 55 11 15 21 37 21 49 0 28 -31 26 -54 -5z M900 1040 c0 -11 34 -37
+58 -44 12 -4 22 -11 22 -15 0 -3 8 -7 18 -8 9 -1 55 -15 102 -32 63 -23 102
+-30 150 -30 l65 0 -87 19 c-138 29 -268 77 -268 99 0 5 -13 11 -30 13 -16 3
+-30 2 -30 -2z M3717 503 c-157 -189 -327 -312 -527 -381 -139 -48 -206 -57
+-410 -56 -203 1 -286 13 -745 108 -407 84 -654 115 -975 123 -410 10 -636 -26
+-967 -155 -80 -31 -93 -40 -93 -59 0 -29 7 -28 100 1 195 62 514 104 705 92
+376 -24 873 -89 1202 -156 87 -18 138 -20 599 -20 l503 0 76 30 c171 68 302
+151 428 269 114 109 187 205 187 249 0 17 -4 32 -9 32 -5 0 -38 -35 -74 -77z"/>
+          </g>
+        </g>
+        <g transform="translate(730,440)">
+          <g transform="translate(0.000000,260.000000) scale(0.100000,-0.100000)" fill="#F5EFEC" stroke="none">
+            <path d="M2827 1713 c-16 -15 -7 -62 13 -68 11 -3 20 -11 20 -16 0 -20 16 -7
+27 22 15 39 2 69 -31 69 -12 0 -26 -3 -29 -7z M2672 1575 c-47 -46 -52 -48
+-90 -45 -12 1 -25 -6 -28 -15 -9 -23 -2 -26 34 -16 29 9 32 8 32 -12 0 -30 11
+-44 43 -56 39 -15 50 -14 43 4 -3 8 -1 15 4 15 14 0 13 67 -1 93 -10 18 -8 24
+15 43 30 26 32 34 10 34 -8 0 -36 -20 -62 -45z m8 -105 c-20 -12 -33 -1 -19
+16 9 11 15 12 23 4 8 -8 7 -13 -4 -20z M2900 1390 c-14 -35 -1 -60 32 -60 15
+0 18 5 13 21 -5 14 -2 25 6 30 11 8 10 12 -5 24 -27 21 -32 19 -46 -15z M970
+1207 c-36 -14 -76 -42 -114 -79 -33 -31 -65 -59 -73 -62 -7 -3 -13 -10 -13
+-17 0 -6 7 -8 15 -5 10 4 32 -11 63 -43 44 -45 127 -111 141 -111 4 0 6 51 6
+113 0 104 2 117 28 166 15 29 27 55 27 57 0 8 -27 2 -80 -19z M2905 1183 c4
+-10 17 -49 29 -86 17 -56 18 -71 8 -88 -7 -11 -10 -24 -7 -29 3 -5 -2 -27 -11
+-50 -9 -22 -14 -43 -12 -46 11 -11 112 51 167 102 39 36 64 52 75 48 12 -4 16
+0 16 16 0 13 -5 20 -12 17 -7 -2 -33 13 -57 34 -48 43 -153 99 -184 99 -14 0
+-17 -4 -12 -17z"/>
+          </g>
+        </g>
+      </svg>
+      <p class="auth-title">Espace admin</p>
+      <p class="auth-sub">Klinic Studio</p>
+      <p class="auth-checking" id="authChecking">Vérification de la session…</p>
+      <form id="loginForm" style="display:none;">
+        <input type="email" id="loginEmail" placeholder="Adresse email" required autocomplete="username">
+        <input type="password" id="loginPassword" placeholder="Mot de passe" required autocomplete="current-password">
+        <button type="submit" class="auth-btn">Se connecter</button>
+        <p class="auth-error" id="authError"></p>
+      </form>
+      <a href="index.html" class="back-site" style="margin-top:1.2rem;">← Retour au site</a>
+    </div>
+  </div>
+
+  <!-- ============ DASHBOARD ============ -->
+  <div id="dashboard">
+    <aside class="sidebar">
+      <div class="sidebar-brand">
+        <svg class="sidebar-mark" viewBox="290 320 840 540" xmlns="http://www.w3.org/2000/svg">
+        <g transform="translate(130,280)" fill="none" stroke="var(--rose-gold)" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M 181,124 L 185,122 L 193,120 L 194,119 L 197,119 L 198,118 L 204,118 L 205,117 L 212,117 L 213,116 L 263,116 L 264,117 L 283,117 L 284,118 L 319,118 L 320,117 L 331,117 L 332,116 L 344,115 L 345,114 L 349,114 L 350,113 L 353,113 L 354,112 L 360,112 L 364,116" pathLength="1" stroke-width="4.0" style="--delay:0.000s"/>
+        <path d="M 232,358 L 232,364 L 233,365 L 233,368 L 234,369 L 234,371 L 235,372 L 235,374 L 237,378 L 239,380 L 241,384 L 250,393 L 251,393 L 256,397 L 258,397 L 262,399 L 265,399 L 266,400 L 287,400 L 288,399 L 296,397 L 304,393 L 306,391 L 309,390 L 311,388 L 315,386 L 328,373 L 328,372 L 334,365 L 335,362 L 338,359 L 339,356 L 341,354 L 342,350 L 349,337 L 349,335 L 352,330 L 352,328 L 354,324 L 355,317 L 356,316 L 357,310 L 358,309 L 359,303 L 360,302 L 360,298 L 361,297 L 361,291 L 362,290 L 362,286 L 363,285 L 364,270 L 366,267" pathLength="1" stroke-width="6.39" style="--delay:0.068s"/>
+        <path d="M 364,116 L 364,175 L 365,176 L 365,207 L 366,208 L 365,265 L 366,266" pathLength="1" stroke-width="16.0" style="--delay:0.135s"/>
+        <path d="M 367,102 L 366,103 L 365,115 L 364,116" pathLength="1" stroke-width="15.98" style="--delay:0.203s"/>
+        <path d="M 367,267 L 375,267" pathLength="1" stroke-width="18.0" style="--delay:0.271s"/>
+        <path d="M 367,101 L 367,98 L 368,97 L 368,89 L 370,85 L 371,78 L 374,74 L 377,68 L 380,65 L 382,64 L 385,64 L 386,63 L 388,64 L 393,64 L 395,65 L 399,69 L 399,71 L 400,72 L 400,77 L 399,78 L 399,81 L 396,87 L 385,98 L 383,98 L 380,101 L 377,101 L 376,102 L 368,102" pathLength="1" stroke-width="7.6" style="--delay:0.338s"/>
+        <path d="M 376,266 L 393,250 L 393,249 L 401,240 L 405,233 L 408,230 L 413,220 L 416,217 L 418,212 L 420,210 L 423,204 L 424,200 L 426,198 L 429,192 L 429,190 L 434,181 L 434,179 L 438,172 L 438,170 L 446,154 L 446,152 L 448,149 L 448,147 L 458,127 L 458,125 L 460,123 L 460,121 L 463,115 L 465,113 L 465,111 L 469,103 L 471,101 L 473,96 L 475,94 L 478,88 L 484,81 L 484,80 L 492,72 L 493,72 L 495,70 L 501,67 L 503,67 L 504,66 L 509,66 L 510,67 L 516,68 L 520,71 L 523,77 L 523,79 L 524,80 L 525,88" pathLength="1" stroke-width="11.59" style="--delay:0.406s"/>
+        <path d="M 493,392 L 491,394 L 479,394 L 478,393 L 474,393 L 473,392 L 471,392 L 463,388 L 461,386 L 458,385 L 451,379 L 450,379 L 429,358 L 429,357 L 425,353 L 425,352 L 422,349 L 422,348 L 414,337 L 406,321 L 404,319 L 380,271 L 376,267" pathLength="1" stroke-width="14.0" style="--delay:0.474s"/>
+        <path d="M 499,392 L 494,392" pathLength="1" stroke-width="19.38" style="--delay:0.542s"/>
+        <path d="M 499,392 L 504,387 L 510,385 L 534,361 L 534,360 L 539,355 L 539,354 L 546,346 L 546,345 L 550,340 L 552,335 L 555,332 L 558,325 L 560,323 L 561,318 L 563,316 L 565,312 L 565,310 L 567,307 L 568,301 L 570,298 L 570,296 L 572,292 L 572,287 L 573,286 L 573,282 L 574,281 L 574,266 L 573,265 L 573,261 L 569,254 L 564,250 L 562,250 L 561,249 L 557,249 L 556,248 L 550,248 L 549,249 L 544,249 L 543,250 L 541,250 L 538,252 L 534,253 L 532,255 L 528,257 L 525,260 L 524,260 L 511,273 L 511,274 L 503,284 L 497,296 L 497,298 L 494,303 L 494,305 L 493,306 L 493,308 L 491,312 L 491,316 L 490,317 L 490,321 L 489,322 L 489,327 L 488,328 L 488,333 L 487,334 L 487,362 L 488,363 L 489,373 L 490,374 L 490,377 L 491,378 L 491,381 L 492,382 L 492,388 L 493,389 L 493,391" pathLength="1" stroke-width="14.39" style="--delay:0.609s"/>
+        <path d="M 528,448 L 526,445 L 526,442 L 524,440 L 522,435 L 520,433 L 516,425 L 512,420 L 508,412 L 504,407 L 501,401 L 501,397 L 500,396 L 500,393 L 499,392" pathLength="1" stroke-width="15.18" style="--delay:0.677s"/>
+        <path d="M 530,449 L 536,443 L 541,442 L 549,436 L 552,435 L 554,433 L 557,432 L 564,427 L 569,425 L 571,423 L 587,415 L 589,415 L 592,413 L 594,413 L 599,409" pathLength="1" stroke-width="4.39" style="--delay:0.745s"/>
+        <path d="M 530,449 L 532,451 L 532,457 L 533,458 L 533,461 L 534,462 L 534,465 L 535,466 L 535,469 L 536,470 L 536,491 L 535,492 L 535,498 L 534,499 L 534,502 L 531,507 L 530,512 L 525,522 L 520,528 L 518,532 L 505,544 L 504,544 L 496,550 L 490,553 L 488,553 L 484,555 L 481,555 L 480,556 L 475,556 L 474,557 L 465,557 L 464,556 L 459,556 L 458,555 L 454,554 L 448,548 L 446,544 L 446,541 L 445,540 L 445,529 L 446,528 L 446,524 L 448,520 L 450,518 L 450,516 L 453,513 L 453,512 L 459,505 L 459,504 L 482,482 L 483,482 L 487,478 L 488,478 L 492,474 L 496,472 L 503,466 L 504,466 L 506,464 L 513,460 L 516,457 L 520,455 L 522,455 L 528,449" pathLength="1" stroke-width="8.0" style="--delay:0.812s"/>
+        </g>
+        <g transform="translate(730,440)">
+          <g transform="translate(0.000000,260.000000) scale(0.100000,-0.100000)" fill="var(--rose-gold)" stroke="none">
+            <path d="M2800 1598 c0 -5 -17 -9 -37 -8 -21 1 -40 1 -43 0 -3 -1 -30 -4 -60
+-6 -69 -5 -188 -27 -356 -64 -73 -17 -148 -30 -167 -30 -45 0 -52 -11 -31 -52
+52 -103 147 -134 269 -88 79 30 206 68 248 75 36 6 38 7 23 24 -22 24 -20 54
+5 77 20 18 21 18 40 -6 14 -18 18 -34 14 -57 -3 -17 -1 -34 5 -38 5 -3 10 -1
+10 4 0 7 24 11 60 11 33 0 60 -4 60 -9 0 -12 33 -9 42 4 5 7 14 6 28 -3 14 -8
+20 -9 20 -1 0 22 249 -27 359 -71 30 -11 56 -19 59 -16 34 35 -249 194 -400
+224 -45 9 -85 20 -88 23 -9 11 -60 17 -60 7z M1036 1580 c-117 -21 -331 -121
+-410 -191 -54 -48 -42 -57 36 -26 130 52 256 72 448 72 197 -1 259 -11 416
+-70 161 -61 254 -43 305 57 29 58 26 68 -24 68 -23 0 -96 13 -162 29 -244 60
+-485 84 -609 61z M2031 1462 c-1 -22 25 -76 45 -92 17 -14 16 -12 -2 20 -11
+19 -25 46 -32 60 -6 14 -11 19 -11 12z M3035 1080 c-3 -5 -17 -10 -29 -10 -15
+0 -26 -7 -29 -20 -3 -11 -12 -20 -21 -20 -9 0 -16 -4 -16 -10 0 -14 -39 -37
+-127 -76 -43 -18 -68 -34 -56 -34 25 0 131 37 151 53 10 8 16 7 23 -4 5 -8 9
+-9 9 -4 0 6 16 19 35 29 19 11 35 24 35 29 0 5 11 20 25 33 25 23 33 44 16 44
+-6 0 -13 -4 -16 -10z M788 1073 c-23 -6 -23 -17 4 -69 12 -24 18 -47 14 -51
+-4 -4 -37 -7 -74 -7 -65 0 -158 34 -177 64 -10 17 -35 11 -35 -8 0 -33 115
+-122 157 -122 7 0 13 -4 13 -10 0 -14 -46 -12 -108 3 -53 14 -62 13 -62 -9 0
+-15 89 -64 115 -64 29 0 15 -19 -17 -22 -81 -8 -16 -48 78 -48 54 0 72 -13 33
+-23 -45 -12 -13 -32 49 -32 67 0 73 -3 42 -23 -49 -30 22 -44 87 -17 45 19 44
+20 37 -15 -7 -34 5 -38 46 -15 32 18 40 18 40 0 0 -19 24 -19 40 0 16 19 40
+19 40 1 0 -27 21 -28 47 -5 18 17 27 20 30 12 6 -17 28 -16 42 1 7 8 39 17 71
+21 33 4 63 11 66 16 3 6 14 7 23 4 11 -3 25 3 36 15 10 11 23 20 30 20 45 0
+97 50 111 104 4 19 17 32 35 40 16 6 29 16 29 23 0 17 -9 16 -81 -2 -88 -23
+-231 -34 -318 -24 -89 10 -211 46 -218 66 -3 7 -9 13 -14 13 -19 0 -89 53 -89
+67 0 8 -13 20 -30 26 -16 6 -30 14 -30 18 0 16 -47 55 -62 52z M3116 1045
+c-11 -14 -25 -24 -33 -21 -7 3 -13 -1 -13 -9 0 -7 -9 -17 -20 -20 -11 -3 -20
+-12 -20 -20 0 -8 -9 -16 -19 -20 -11 -3 -34 -20 -52 -36 -18 -16 -38 -28 -45
+-25 -7 3 -15 -1 -17 -9 -8 -18 -88 -43 -180 -55 -88 -11 -245 1 -324 25 -26 8
+-56 15 -65 15 -27 0 -22 -19 8 -32 17 -8 34 -31 49 -64 21 -48 63 -84 98 -84
+6 0 18 -7 28 -16 9 -8 28 -17 41 -20 71 -12 146 -31 165 -42 12 -6 28 -9 37
+-6 8 3 25 -1 38 -10 31 -22 38 -20 38 9 0 31 3 31 41 3 29 -22 31 -22 43 -6
+12 17 16 17 44 2 38 -19 54 -11 46 22 -7 28 -7 28 39 9 46 -19 97 -20 97 -1 0
+8 -7 16 -15 20 -32 12 -12 21 47 21 71 0 87 17 34 35 -55 18 -43 26 32 22 71
+-4 126 10 120 31 -3 6 -19 13 -36 15 -44 4 -40 15 11 30 24 7 56 24 72 37 26
+21 28 24 12 30 -9 4 -37 2 -62 -4 -53 -13 -105 -14 -105 -2 0 5 13 12 29 16
+67 15 167 103 143 127 -8 8 -26 1 -60 -21 -54 -34 -138 -55 -189 -45 -44 8
+-50 20 -24 55 11 15 21 37 21 49 0 28 -31 26 -54 -5z M900 1040 c0 -11 34 -37
+58 -44 12 -4 22 -11 22 -15 0 -3 8 -7 18 -8 9 -1 55 -15 102 -32 63 -23 102
+-30 150 -30 l65 0 -87 19 c-138 29 -268 77 -268 99 0 5 -13 11 -30 13 -16 3
+-30 2 -30 -2z M3717 503 c-157 -189 -327 -312 -527 -381 -139 -48 -206 -57
+-410 -56 -203 1 -286 13 -745 108 -407 84 -654 115 -975 123 -410 10 -636 -26
+-967 -155 -80 -31 -93 -40 -93 -59 0 -29 7 -28 100 1 195 62 514 104 705 92
+376 -24 873 -89 1202 -156 87 -18 138 -20 599 -20 l503 0 76 30 c171 68 302
+151 428 269 114 109 187 205 187 249 0 17 -4 32 -9 32 -5 0 -38 -35 -74 -77z"/>
+          </g>
+        </g>
+        <g transform="translate(730,440)">
+          <g transform="translate(0.000000,260.000000) scale(0.100000,-0.100000)" fill="#F5EFEC" stroke="none">
+            <path d="M2827 1713 c-16 -15 -7 -62 13 -68 11 -3 20 -11 20 -16 0 -20 16 -7
+27 22 15 39 2 69 -31 69 -12 0 -26 -3 -29 -7z M2672 1575 c-47 -46 -52 -48
+-90 -45 -12 1 -25 -6 -28 -15 -9 -23 -2 -26 34 -16 29 9 32 8 32 -12 0 -30 11
+-44 43 -56 39 -15 50 -14 43 4 -3 8 -1 15 4 15 14 0 13 67 -1 93 -10 18 -8 24
+15 43 30 26 32 34 10 34 -8 0 -36 -20 -62 -45z m8 -105 c-20 -12 -33 -1 -19
+16 9 11 15 12 23 4 8 -8 7 -13 -4 -20z M2900 1390 c-14 -35 -1 -60 32 -60 15
+0 18 5 13 21 -5 14 -2 25 6 30 11 8 10 12 -5 24 -27 21 -32 19 -46 -15z M970
+1207 c-36 -14 -76 -42 -114 -79 -33 -31 -65 -59 -73 -62 -7 -3 -13 -10 -13
+-17 0 -6 7 -8 15 -5 10 4 32 -11 63 -43 44 -45 127 -111 141 -111 4 0 6 51 6
+113 0 104 2 117 28 166 15 29 27 55 27 57 0 8 -27 2 -80 -19z M2905 1183 c4
+-10 17 -49 29 -86 17 -56 18 -71 8 -88 -7 -11 -10 -24 -7 -29 3 -5 -2 -27 -11
+-50 -9 -22 -14 -43 -12 -46 11 -11 112 51 167 102 39 36 64 52 75 48 12 -4 16
+0 16 16 0 13 -5 20 -12 17 -7 -2 -33 13 -57 34 -48 43 -153 99 -184 99 -14 0
+-17 -4 -12 -17z"/>
+          </g>
+        </g>
+      </svg>
+        <span>Klinic Studio</span>
+      </div>
+      <button class="nav-item active" data-panel="panelCatalog"><span>Catalogue</span></button>
+      <button class="nav-item" data-panel="panelAppointments"><span>Rendez-vous</span></button>
+      <div class="sidebar-footer">
+        <button class="logout-btn" id="logoutBtn">Se déconnecter</button>
+        <a href="index.html" class="back-site">← Retour au site</a>
+      </div>
+    </aside>
+
+    <main class="main">
+      <!-- CATALOGUE PANEL -->
+      <section class="panel active" id="panelCatalog">
+        <div class="panel-head">
+          <div>
+            <p class="panel-title">Catalogue de bijoux</p>
+            <p class="panel-sub" id="catalogCount">0 article</p>
+          </div>
+          <button class="btn" id="addItemBtn">+ Ajouter un bijou</button>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th></th><th>Nom</th><th>Prix</th><th>Catégorie</th><th>Matériau</th><th></th></tr>
+            </thead>
+            <tbody id="catalogTableBody">
+              <tr class="empty-row"><td colspan="6">Chargement du catalogue…</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- APPOINTMENTS PANEL -->
+      <section class="panel" id="panelAppointments">
+        <div class="panel-head">
+          <div>
+            <p class="panel-title">Demandes de rendez-vous</p>
+            <p class="panel-sub" id="apptCount">0 demande</p>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>Nom</th><th>Téléphone</th><th>Type</th><th>Date/heure souhaitée</th><th>Statut</th></tr>
+            </thead>
+            <tbody id="apptTableBody">
+              <tr class="empty-row"><td colspan="5">Chargement des demandes…</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- ============ ITEM MODAL ============ -->
+  <div class="modal-overlay" id="itemModalOverlay">
+    <div class="modal">
+      <p class="modal-title" id="itemModalTitle">Ajouter un bijou</p>
+      <form id="itemForm">
+        <div class="field">
+          <label for="itemName">Nom</label>
+          <input type="text" id="itemName" required placeholder="Ex : Anneau nombril doré">
+        </div>
+        <div class="field">
+          <label for="itemPrice">Prix (FCFA)</label>
+          <input type="number" id="itemPrice" required min="0" placeholder="Ex : 8000">
+        </div>
+        <div class="field">
+          <label for="itemCategory">Catégorie</label>
+          <select id="itemCategory" required>
+            <option value="Oreilles">Oreilles</option>
+            <option value="Nombril">Nombril</option>
+            <option value="Nez">Nez</option>
+            <option value="Cils">Cils</option>
+            <option value="Hélix">Hélix</option>
+            <option value="Tragus">Tragus</option>
+            <option value="Surface Tragus">Surface Tragus</option>
+            <option value="Industriel">Industriel</option>
+            <option value="Lobe">Lobe</option>
+            <option value="Rook">Rook</option>
+            <option value="Conch">Conch</option>
+            <option value="Septum">Septum</option>
+            <option value="Langue">Langue</option>
+            <option value="Téton">Téton</option>
+            <option value="Micro Dermal">Micro Dermal</option>
+            <option value="Daith">Daith</option>
+            <option value="Smiley">Smiley</option>
+            <option value="Flat">Flat</option>
+            <option value="Autres">Autres</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="itemMaterial">Matériau</label>
+          <select id="itemMaterial" required>
+            <option value="Acier inoxydable">Acier inoxydable</option>
+            <option value="Titane">Titane</option>
+            <option value="Or">Or</option>
+            <option value="Argent">Argent</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="itemDescription">Description</label>
+          <textarea id="itemDescription" placeholder="Détails, taille, entretien…"></textarea>
+        </div>
+        <div class="field">
+          <label for="itemPhotosInput">Photos</label>
+          <input type="file" id="itemPhotosInput" accept="image/*" multiple>
+          <p class="field-hint">Ajoutez une ou plusieurs photos. La première de la liste sert de photo de couverture sur le catalogue. Compression automatique à l'ajout.</p>
+          <div class="photo-list" id="photoList"></div>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn btn-outline" id="itemCancelBtn">Annuler</button>
+          <button type="submit" class="btn" id="itemSaveBtn">Enregistrer</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import {
+    getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut
+  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+  import {
+    getFirestore, doc, onSnapshot, setDoc, deleteDoc, getDoc, collection, query, orderBy
+  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+  // TODO: remplacer par la config réelle du projet Firebase de Klinic Studio (même projet que index.html)
+  const firebaseConfig = {
+    apiKey: "AIzaSyDXiqSkn6-3JZb71Qr-j97idNvGbd3lGLM",
+    authDomain: "klinic-studio.firebaseapp.com",
+    projectId: "klinic-studio",
+    storageBucket: "klinic-studio.firebasestorage.app",
+    messagingSenderId: "234909068692",
+    appId: "1:234909068692:web:fb4a50d6eed566c970f381"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+
+  const authGate = document.getElementById('authGate');
+  const authChecking = document.getElementById('authChecking');
+  const loginForm = document.getElementById('loginForm');
+  const authError = document.getElementById('authError');
+  const dashboard = document.getElementById('dashboard');
+
+  onAuthStateChanged(auth, (user) => {
+    if (user){
+      authGate.style.display = 'none';
+      dashboard.classList.add('show');
+      startListeners();
+    } else {
+      dashboard.classList.remove('show');
+      authGate.style.display = 'flex';
+      authChecking.style.display = 'none';
+      loginForm.style.display = 'block';
+    }
+  });
+
+  loginForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    authError.textContent = '';
+    const email = document.getElementById('loginEmail').value.trim();
+    const password = document.getElementById('loginPassword').value;
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+    } catch(err){
+      authError.textContent = "Identifiants incorrects. Vérifiez l'email et le mot de passe.";
+    }
+  });
+
+  document.getElementById('logoutBtn').addEventListener('click', () => signOut(auth));
+
+  // ---- nav switching ----
+  document.querySelectorAll('.nav-item').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById(btn.dataset.panel).classList.add('active');
+    });
+  });
+
+  // ---- catalog state ----
+  let catalogItems = [];       // liste légère : {id, name, price, category, material, description, coverThumb, photoCount}
+  let editingId = null;
+  let listenersStarted = false;
+  let pendingPhotos = [];      // pendant l'édition : [{thumb, fullSmall, fullLarge}, ...] — index 0 = couverture
+
+  function formatPrice(n){ return Number(n).toLocaleString('fr-FR') + " FCFA"; }
+
+  // ---- compression image (3 tailles : miniature catalogue, galerie mobile, galerie desktop) ----
+  function loadImage(file){
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      const reader = new FileReader();
+      reader.onload = () => { img.onload = () => resolve(img); img.onerror = reject; img.src = reader.result; };
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  }
+
+  function resizeToDataUrl(img, maxDim, quality){
+    const scale = Math.min(1, maxDim / Math.max(img.width, img.height));
+    const w = Math.round(img.width * scale);
+    const h = Math.round(img.height * scale);
+    const canvas = document.createElement('canvas');
+    canvas.width = w; canvas.height = h;
+    canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+    return canvas.toDataURL('image/jpeg', quality);
+  }
+
+  async function compressPhoto(file){
+    const img = await loadImage(file);
+    return {
+      thumb: resizeToDataUrl(img, 480, 0.72),
+      fullSmall: resizeToDataUrl(img, 900, 0.78),
+      fullLarge: resizeToDataUrl(img, 1600, 0.82)
+    };
+  }
+
+  function renderCatalogTable(){
+    const tbody = document.getElementById('catalogTableBody');
+    document.getElementById('catalogCount').textContent = catalogItems.length + (catalogItems.length > 1 ? " articles" : " article");
+    if (!catalogItems.length){
+      tbody.innerHTML = '<tr class="empty-row"><td colspan="6">Aucun bijou pour le moment — ajoutez le premier.</td></tr>';
+      return;
+    }
+    tbody.innerHTML = catalogItems.map(item => `
+      <tr>
+        <td>${item.coverThumb ? `<img class="thumb" src="${item.coverThumb}" alt="">` : '<div class="thumb"></div>'}</td>
+        <td>${item.name}${item.photoCount > 1 ? ` <span class="status-pill">${item.photoCount} photos</span>` : ''}</td>
+        <td>${formatPrice(item.price)}</td>
+        <td>${item.category || '—'}</td>
+        <td>${item.material || '—'}</td>
+        <td>
+          <div class="row-actions">
+            <button class="icon-btn" data-edit="${item.id}">Modifier</button>
+            <button class="icon-btn danger" data-remove="${item.id}">Retirer</button>
+          </div>
+        </td>
+      </tr>
+    `).join('');
+
+    tbody.querySelectorAll('[data-edit]').forEach(b => b.addEventListener('click', () => openItemModal(b.dataset.edit)));
+    tbody.querySelectorAll('[data-remove]').forEach(b => b.addEventListener('click', () => removeItem(b.dataset.remove)));
+  }
+
+  async function removeItem(id){
+    if(!confirm("Retirer ce bijou du catalogue ?")) return;
+    try {
+      await deleteDoc(doc(db, "ks_catalog_items", id));
+      await deleteDoc(doc(db, "ks_catalog_items", id, "meta", "gallery"));
+    } catch(err){
+      alert("Erreur lors de la suppression : " + err.message);
+    }
+  }
+
+  // ---- item modal ----
+  const itemModalOverlay = document.getElementById('itemModalOverlay');
+  const itemForm = document.getElementById('itemForm');
+  const itemPhotosInput = document.getElementById('itemPhotosInput');
+  const photoList = document.getElementById('photoList');
+
+  function renderPhotoList(){
+    if (!pendingPhotos.length){
+      photoList.innerHTML = '<p class="photo-empty-hint">Aucune photo ajoutée pour le moment.</p>';
+      return;
+    }
+    photoList.innerHTML = pendingPhotos.map((p, i) => `
+      <div class="photo-row" data-index="${i}">
+        <img src="${p.thumb}" alt="">
+        ${i === 0 ? '<span class="cover-tag">Couverture</span>' : ''}
+        <div class="photo-row-actions">
+          <button type="button" class="icon-btn" data-up="${i}" ${i === 0 ? 'disabled' : ''}>↑</button>
+          <button type="button" class="icon-btn" data-down="${i}" ${i === pendingPhotos.length - 1 ? 'disabled' : ''}>↓</button>
+          <button type="button" class="icon-btn danger" data-del="${i}">Retirer</button>
+        </div>
+      </div>
+    `).join('');
+
+    photoList.querySelectorAll('[data-up]').forEach(b => b.addEventListener('click', () => {
+      const i = Number(b.dataset.up);
+      [pendingPhotos[i-1], pendingPhotos[i]] = [pendingPhotos[i], pendingPhotos[i-1]];
+      renderPhotoList();
+    }));
+    photoList.querySelectorAll('[data-down]').forEach(b => b.addEventListener('click', () => {
+      const i = Number(b.dataset.down);
+      [pendingPhotos[i+1], pendingPhotos[i]] = [pendingPhotos[i], pendingPhotos[i+1]];
+      renderPhotoList();
+    }));
+    photoList.querySelectorAll('[data-del]').forEach(b => b.addEventListener('click', () => {
+      pendingPhotos.splice(Number(b.dataset.del), 1);
+      renderPhotoList();
+    }));
+  }
+
+  async function openItemModal(id){
+    editingId = id || null;
+    itemForm.reset();
+    pendingPhotos = [];
+    renderPhotoList();
+    document.getElementById('itemModalTitle').textContent = id ? "Modifier le bijou" : "Ajouter un bijou";
+
+    if (id){
+      const item = catalogItems.find(i => i.id === id);
+      if (item){
+        document.getElementById('itemName').value = item.name || '';
+        document.getElementById('itemPrice').value = item.price || '';
+        document.getElementById('itemCategory').value = item.category || 'Oreilles';
+        document.getElementById('itemMaterial').value = item.material || 'Acier inoxydable';
+        document.getElementById('itemDescription').value = item.description || '';
+      }
+      itemModalOverlay.classList.add('show');
+      // La galerie complète (toutes les photos) n'est chargée qu'à l'ouverture de la fiche,
+      // pas dans le listing principal — évite d'alourdir le tableau de bord.
+      try {
+        const gallerySnap = await getDoc(doc(db, "ks_catalog_items", id, "meta", "gallery"));
+        pendingPhotos = (gallerySnap.exists() && Array.isArray(gallerySnap.data().photos)) ? gallerySnap.data().photos : [];
+      } catch(err){
+        console.warn("Galerie indisponible :", err.message);
+      }
+      renderPhotoList();
+    } else {
+      itemModalOverlay.classList.add('show');
+    }
+  }
+
+  function closeItemModal(){ itemModalOverlay.classList.remove('show'); editingId = null; pendingPhotos = []; }
+
+  document.getElementById('addItemBtn').addEventListener('click', () => openItemModal(null));
+  document.getElementById('itemCancelBtn').addEventListener('click', closeItemModal);
+  itemModalOverlay.addEventListener('click', (e) => { if (e.target === itemModalOverlay) closeItemModal(); });
+
+  itemPhotosInput.addEventListener('change', async () => {
+    const files = Array.from(itemPhotosInput.files || []);
+    if (!files.length) return;
+    const saveBtn = document.getElementById('itemSaveBtn');
+    saveBtn.disabled = true;
+    saveBtn.textContent = "Compression des photos…";
+    try {
+      for (const file of files){
+        const compressed = await compressPhoto(file);
+        pendingPhotos.push(compressed);
+      }
+      renderPhotoList();
+    } catch(err){
+      alert("Erreur lors du traitement d'une photo : " + err.message);
+    } finally {
+      saveBtn.disabled = false;
+      saveBtn.textContent = "Enregistrer";
+      itemPhotosInput.value = '';
+    }
+  });
+
+  itemForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (!pendingPhotos.length){
+      alert("Ajoutez au moins une photo avant d'enregistrer.");
+      return;
+    }
+    const id = editingId || (Date.now().toString(36) + Math.random().toString(36).slice(2, 7));
+    const data = {
+      id,
+      name: document.getElementById('itemName').value.trim(),
+      price: Number(document.getElementById('itemPrice').value),
+      category: document.getElementById('itemCategory').value,
+      material: document.getElementById('itemMaterial').value,
+      description: document.getElementById('itemDescription').value.trim(),
+      coverThumb: pendingPhotos[0].thumb,
+      photoCount: pendingPhotos.length
+    };
+
+    try {
+      await setDoc(doc(db, "ks_catalog_items", id), data);
+      await setDoc(doc(db, "ks_catalog_items", id, "meta", "gallery"), { photos: pendingPhotos });
+      closeItemModal();
+    } catch(err){
+      alert("Erreur lors de l'enregistrement : " + err.message);
+    }
+  });
+
+  // ---- appointments ----
+  function renderAppointments(items){
+    const tbody = document.getElementById('apptTableBody');
+    document.getElementById('apptCount').textContent = items.length + (items.length > 1 ? " demandes" : " demande");
+    if (!items.length){
+      tbody.innerHTML = '<tr class="empty-row"><td colspan="5">Aucune demande de rendez-vous pour le moment.</td></tr>';
+      return;
+    }
+    tbody.innerHTML = items.map(a => `
+      <tr>
+        <td>${a.name || '—'}</td>
+        <td>${a.phone || '—'}</td>
+        <td>${a.piercingType || '—'}</td>
+        <td>${a.requestedDateTime ? new Date(a.requestedDateTime).toLocaleString('fr-FR') : '—'}</td>
+        <td><span class="status-pill">${(a.status || 'en_attente').replace('_',' ')}</span></td>
+      </tr>
+    `).join('');
+  }
+
+  function startListeners(){
+    if (listenersStarted) return;
+    listenersStarted = true;
+
+    onSnapshot(collection(db, "ks_catalog_items"), async (snap) => {
+      catalogItems = snap.docs.map(d => d.data());
+      renderCatalogTable();
+
+      // Migration ponctuelle depuis l'ancien format (un seul document avec photo unique par article)
+      if (catalogItems.length === 0){
+        try {
+          const legacySnap = await getDoc(doc(db, "ks_catalog", "items"));
+          const legacyItems = (legacySnap.exists() && Array.isArray(legacySnap.data().items)) ? legacySnap.data().items : [];
+          for (const legacy of legacyItems){
+            const material = legacy.material === 'Acier chirurgical' ? 'Acier inoxydable' : (legacy.material || 'Acier inoxydable');
+            const photo = legacy.photoUrl || '';
+            const id = legacy.id || (Date.now().toString(36) + Math.random().toString(36).slice(2, 7));
+            await setDoc(doc(db, "ks_catalog_items", id), {
+              id, name: legacy.name || '', price: legacy.price || 0, category: legacy.category || 'Autres',
+              material, description: legacy.description || '',
+              coverThumb: photo, photoCount: photo ? 1 : 0
+            });
+            await setDoc(doc(db, "ks_catalog_items", id, "meta", "gallery"), {
+              photos: photo ? [{ thumb: photo, fullSmall: photo, fullLarge: photo }] : []
+            });
+          }
+        } catch(err){
+          console.warn("Migration catalogue échouée :", err.message);
+        }
+      }
+    }, (err) => console.warn("Catalogue indisponible :", err.message));
+
+    const apptQuery = query(collection(db, "ks_appointments"), orderBy("createdAt", "desc"));
+    onSnapshot(apptQuery, (snap) => {
+      const items = snap.docs.map(d => d.data());
+      renderAppointments(items);
+    }, (err) => console.warn("Rendez-vous indisponibles :", err.message));
+  }
+</script>
+
+</body>
+</html>
