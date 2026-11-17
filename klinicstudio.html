@@ -1,0 +1,2623 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Klinic Studio — Lash and Piercing</title>
+<meta name="description" content="Klinic Studio — institut de piercing et de lash à Cotonou. Bijoux de piercing, prise de rendez-vous, perçage professionnel.">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;1,500;1,600;1,700&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --rose-gold: #B01760;
+    --rose-gold-light: #C85D90;
+    --rose-gold-deep: #961452;
+    --bg: #050505;
+    --bg-panel: #0c0b0b;
+    --bg-panel-2: #121010;
+    --ivory: #f2e9e6;
+    --ivory-muted: rgba(242,233,230,0.58);
+    --ivory-faint: rgba(242,233,230,0.55);
+    --rose-text: #C85D90;
+    --line: rgba(216,165,150,0.18);
+    --radius-lg: 28px;
+    --radius-md: 18px;
+    --radius-sm: 12px;
+    --serif: 'EB Garamond', Georgia, serif;
+    --display: 'Playfair Display', Georgia, serif;
+  }
+  *{ margin:0; padding:0; box-sizing:border-box; }
+  html{ scroll-behavior:smooth; }
+  html, body{ background:var(--bg); }
+  body{
+    font-family:var(--serif);
+    color:var(--ivory);
+    line-height:1.7;
+    -webkit-font-smoothing:antialiased;
+  }
+  img{ max-width:100%; display:block; }
+  a{ color:inherit; text-decoration:none; }
+  button{ font-family:inherit; cursor:pointer; }
+  ::selection{ background:var(--rose-gold); color:#fff; }
+  [hidden]{ display:none !important; }
+  .icon{ width:1.1em; height:1.1em; flex-shrink:0; }
+  .link-inherit{ color:inherit; }
+  :focus-visible{ outline:2px solid var(--rose-text); outline-offset:3px; }
+
+  @media (prefers-reduced-motion: reduce){
+    html{ scroll-behavior:auto; }
+    *, *::before, *::after{ animation-duration:0.001ms !important; animation-iteration-count:1 !important; transition-duration:0.001ms !important; }
+  }
+
+  /* ---------- SPLASH ---------- */
+  #splash{
+    position:fixed; inset:0; background:var(--bg);
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    z-index:1000; cursor:pointer; transition:opacity 0.7s ease;
+  }
+  #splash.hide{ opacity:0; pointer-events:none; }
+  .logo-stage{ position:relative; width:min(82vw, 460px); aspect-ratio:1/1; }
+  .logo-stage svg{ position:absolute; inset:0; width:100%; height:100%; }
+  #ksLayer path{
+    fill:none; stroke:var(--rose-gold); stroke-linecap:round; stroke-linejoin:round;
+    stroke-dasharray:1; stroke-dashoffset:1;
+    animation:draw 0.75s ease-out forwards; animation-delay:var(--delay);
+  }
+  @keyframes draw{ to{ stroke-dashoffset:0; } }
+  #restLayer{ opacity:0; animation:fadeIn 0.5s ease forwards; animation-delay:1.55s; }
+  @keyframes fadeIn{ to{ opacity:1; } }
+  .loader{
+    margin-top:2rem; width:min(42vw, 170px); height:2px;
+    background:rgba(216,165,150,0.18); border-radius:2px; overflow:hidden;
+    opacity:0; animation:fadeIn 0.4s ease forwards; animation-delay:2.1s;
+  }
+  .loader-fill{
+    height:100%; width:0%; background:var(--rose-gold); border-radius:2px;
+    animation:fill 1.7s cubic-bezier(0.4,0,0.2,1) forwards; animation-delay:2.15s;
+  }
+  @keyframes fill{ to{ width:100%; } }
+
+  /* ---------- SHARED KS MARK (header/footer) ---------- */
+  .ks-mark{ stroke:var(--rose-gold); fill:none; stroke-linecap:round; stroke-linejoin:round; }
+
+  /* ---------- HEADER ---------- */
+  header{
+    position:fixed; top:0; left:0; right:0; z-index:200;
+    display:flex; align-items:center; justify-content:space-between;
+    padding:0.65rem clamp(1.25rem, 4vw, 3rem);
+    background:rgba(5,5,5,0.9);
+    border-bottom:1px solid rgba(216,165,150,0.14);
+    transition:background 0.4s ease, border-color 0.4s ease;
+  }
+  header.scrolled{
+    background:rgba(5,5,5,0.96);
+    border-bottom-color:rgba(216,165,150,0.22);
+  }
+  /* Flou uniquement si le navigateur le gère ET sur grand écran avec souris (économie de batterie sur mobile) */
+  @supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))){
+    @media (min-width: 981px) and (hover:hover){
+      header{ background:rgba(5,5,5,0.28); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); }
+      header.scrolled{ background:rgba(5,5,5,0.82); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); }
+    }
+  }
+  .brand{ display:flex; align-items:center; gap:0.6rem; }
+  .brand svg{ width:clamp(52px, 6vw, 68px); height:clamp(52px, 6vw, 68px); display:block; }
+  .brand-name{ font-family:var(--display); font-style:italic; font-size:1.05rem; letter-spacing:0.02em; color:var(--ivory); }
+
+  nav.main-nav{ display:flex; align-items:center; gap:clamp(1.1rem, 2.4vw, 2.2rem); }
+  nav.main-nav a{
+    font-size:0.86rem; color:var(--ivory-muted); position:relative; padding:0.2rem 0;
+    transition:color 0.3s ease;
+  }
+  nav.main-nav a::after{
+    content:''; position:absolute; left:0; right:100%; bottom:-2px; height:1px;
+    background:var(--rose-gold); transition:right 0.35s ease;
+  }
+  nav.main-nav a:hover{ color:var(--ivory); }
+  nav.main-nav a:hover::after{ right:0; }
+
+  .header-actions{ display:flex; align-items:center; gap:0.6rem; }
+  .pill-btn{
+    display:inline-flex; align-items:center; gap:0.45rem;
+    padding:0.55rem 1.1rem; border-radius:999px; font-size:0.82rem;
+    border:1px solid var(--rose-gold); color:var(--rose-gold);
+    background:transparent; transition:background 0.3s ease, color 0.3s ease, transform 0.2s ease;
+  }
+  .pill-btn.solid{ background:var(--rose-gold); color:#1a0f0c; border-color:var(--rose-gold); }
+  .pill-btn:hover{ transform:translateY(-1px); background:rgba(216,165,150,0.14); }
+  .pill-btn.solid:hover{ background:var(--rose-gold-light); }
+  .pill-btn svg{ width:15px; height:15px; }
+
+  .burger{
+    display:none; width:38px; height:38px; border:1px solid var(--line); border-radius:10px;
+    background:transparent; align-items:center; justify-content:center; flex-direction:column; gap:4px;
+  }
+  .burger span{ width:16px; height:1px; background:var(--rose-gold); display:block; }
+
+  .mobile-nav{
+    position:fixed; inset:0 0 0 auto; top:0; right:0; height:100vh; width:min(78vw, 320px);
+    background:var(--bg-panel); border-left:1px solid var(--line);
+    z-index:250; transform:translateX(100%); transition:transform 0.4s ease;
+    padding:6.5rem 2rem 2rem; display:flex; flex-direction:column; gap:1.6rem;
+  }
+  .mobile-nav.open{ transform:translateX(0); }
+  .mobile-nav a{ font-size:1rem; color:var(--ivory-muted); }
+  .mobile-nav a:hover{ color:var(--rose-gold); }
+  .mobile-overlay{
+    position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:240;
+    opacity:0; pointer-events:none; transition:opacity 0.4s ease;
+  }
+  .mobile-overlay.open{ opacity:1; pointer-events:auto; }
+  .mobile-close{ align-self:flex-end; background:none; border:none; color:var(--ivory-muted); font-size:0.85rem; }
+
+  /* ---------- SECTIONS shared ---------- */
+  section{ padding:clamp(4.5rem, 9vw, 7rem) clamp(1.25rem, 5vw, 3rem); }
+  .section-inner{ max-width:1180px; margin:0 auto; }
+  .eyebrow{ font-size:0.78rem; color:var(--rose-gold); letter-spacing:0.06em; margin-bottom:0.6rem; }
+  h2.section-title{
+    font-family:var(--display); font-style:italic; font-weight:600;
+    font-size:clamp(2rem, 4.4vw, 3rem); color:var(--ivory); max-width:20ch;
+  }
+  .section-lede{ margin-top:0.9rem; color:var(--ivory-muted); max-width:52ch; font-size:1.02rem; }
+
+  .reveal{ opacity:0; transform:translateY(22px); transition:opacity 0.8s ease, transform 0.8s ease; }
+  .reveal.in{ opacity:1; transform:translateY(0); }
+
+  /* ---------- HERO (2 colonnes) ---------- */
+  .hero{
+    position:relative; min-height:100vh; min-height:100svh; display:flex; align-items:center;
+    padding:7.5rem clamp(1.25rem, 5vw, 3rem) 4rem; overflow:hidden;
+  }
+  .hero-inner{
+    position:relative; width:100%; max-width:1180px; margin:0 auto;
+    display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);
+    gap:clamp(2rem, 5vw, 4.5rem); align-items:center;
+  }
+  .hero-copy{ text-align:left; }
+  .hero-logo{ display:block; width:min(52vw, 210px); height:auto; margin:0 0 1.6rem; }
+  .hero-title{
+    font-family:var(--display); font-style:italic; font-weight:600;
+    font-size:clamp(2rem, 4.8vw, 3.5rem); line-height:1.12; color:var(--ivory);
+    margin-bottom:1rem; max-width:15ch;
+  }
+  .hero-sub{ color:var(--ivory-muted); max-width:44ch; margin:0 0 2rem; font-size:1.05rem; }
+  .hero-ctas{ display:flex; gap:0.8rem; flex-wrap:wrap; }
+  .hero-visual{ position:relative; }
+  .hero-visual::before{
+    content:''; position:absolute; inset:-12% -8%; pointer-events:none;
+    background:radial-gradient(closest-side, rgba(176,23,96,0.34), rgba(176,23,96,0.12) 55%, rgba(176,23,96,0) 100%);
+  }
+  .hero-frame{
+    position:relative; aspect-ratio:16/9; border-radius:var(--radius-lg); overflow:hidden;
+    background:#000; border:1px solid rgba(200,93,144,0.35);
+  }
+  .hero-frame video, .hero-poster{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
+  .hero-replay{
+    position:absolute; right:0.75rem; bottom:0.75rem; min-height:44px; padding:0 1rem 0 0.85rem;
+    display:inline-flex; align-items:center; gap:0.45rem; border-radius:999px;
+    background:rgba(5,5,5,0.82); border:1px solid var(--line); color:var(--ivory); font-size:0.84rem;
+  }
+  .hero-replay:hover{ border-color:var(--rose-text); }
+  .btn{
+    display:inline-flex; align-items:center; gap:0.5rem; padding:0.85rem 1.7rem;
+    border-radius:999px; font-size:0.9rem; letter-spacing:0.01em; transition:transform 0.25s ease, background 0.25s ease, color 0.25s ease;
+  }
+  .btn-primary{ background:var(--rose-gold); color:#1a0f0c; }
+  .btn-primary:hover{ background:var(--rose-gold-light); transform:translateY(-2px); }
+  .btn-ghost{ border:1px solid var(--rose-gold); color:var(--rose-gold); }
+  .btn-ghost:hover{ background:rgba(216,165,150,0.1); transform:translateY(-2px); }
+
+  /* ---------- CATALOGUE ---------- */
+  .catalog-head{ display:flex; align-items:flex-end; justify-content:space-between; gap:1.5rem; flex-wrap:wrap; }
+  .featured-strip{
+    display:flex; gap:1rem; overflow-x:auto; padding:1.6rem 0 0.6rem; margin:0 -0.2rem;
+    scroll-snap-type:x proximity; -webkit-overflow-scrolling:touch;
+  }
+  .featured-card{
+    flex:0 0 180px; scroll-snap-align:start; cursor:pointer; background:var(--bg-panel);
+    border:1px solid var(--line); border-radius:var(--radius-md); overflow:hidden;
+    transition:transform 0.3s ease, border-color 0.3s ease;
+  }
+  .featured-card:hover{ transform:translateY(-4px); border-color:rgba(216,165,150,0.4); }
+  .featured-card img{ width:100%; height:180px; object-fit:cover; display:block; }
+  .featured-card .fc-info{ padding:0.7rem 0.9rem 0.9rem; }
+  .featured-card .fc-name{ font-family:var(--display); font-style:italic; font-size:0.92rem; }
+  .featured-card .fc-price{ color:var(--rose-gold); font-size:0.82rem; margin-top:0.2rem; }
+  .filters{
+    display:flex; gap:0.6rem; flex-wrap:wrap; margin-top:2.4rem; margin-bottom:2.2rem;
+  }
+  .filters select{
+    font-family:var(--serif); font-size:0.85rem; color:var(--ivory);
+    background:var(--bg-panel); border:1px solid var(--line); border-radius:999px;
+    padding:0.55rem 1.1rem; appearance:none;
+  }
+  .catalog-grid{
+    display:grid; grid-template-columns:repeat(4, 1fr); gap:1.6rem;
+  }
+  .product-card{
+    background:var(--bg-panel); border:1px solid var(--line); border-radius:var(--radius-md);
+    overflow:hidden; display:flex; flex-direction:column; transition:transform 0.35s ease, border-color 0.35s ease;
+  }
+  .product-card:hover{ transform:translateY(-5px); border-color:rgba(216,165,150,0.4); }
+  .product-photo{
+    aspect-ratio:1/1; background:var(--bg-panel-2); display:flex; align-items:center; justify-content:center;
+    overflow:hidden; position:relative; cursor:pointer;
+  }
+  .product-photo img{ width:100%; height:100%; object-fit:cover; }
+  .product-photo .ph-fallback{ color:var(--ivory-faint); font-size:0.75rem; }
+  .product-photo-count{
+    position:absolute; bottom:0.6rem; right:0.6rem; font-size:0.72rem; color:var(--ivory);
+    background:rgba(5,5,5,0.78); border:1px solid var(--line); border-radius:999px; padding:0.2rem 0.6rem;
+  }
+  .product-info{ padding:1.1rem 1.2rem 1.3rem; display:flex; flex-direction:column; gap:0.35rem; flex:1; }
+  .product-name{ font-family:var(--display); font-style:italic; font-size:1.05rem; cursor:pointer; }
+  .product-meta{ font-size:0.78rem; color:var(--ivory-faint); }
+  .product-price{ color:var(--rose-gold); font-size:0.95rem; margin-top:0.2rem; }
+  .product-choose{
+    margin-top:0.8rem; align-self:flex-start; font-size:0.78rem;
+    display:inline-flex; align-items:center; gap:0.4rem; color:var(--rose-gold);
+    border:1px solid var(--rose-gold); border-radius:999px; padding:0.5rem 1rem;
+    transition:background 0.25s ease, color 0.25s ease;
+  }
+  .product-choose:hover{ background:var(--rose-gold); color:#1a0f0c; }
+  .product-choose.is-disabled{
+    color:var(--ivory-faint); border-color:var(--line); pointer-events:none; cursor:default;
+  }
+  .product-choose.is-disabled:hover{ background:transparent; color:var(--ivory-faint); }
+  .btn.is-disabled{
+    background:transparent; color:var(--ivory-faint); border:1px solid var(--line);
+    pointer-events:none; cursor:default;
+  }
+  .unavailable-badge{
+    position:absolute; top:0.6rem; left:0.6rem; z-index:2; font-size:0.68rem; letter-spacing:0.02em;
+    background:rgba(5,5,5,0.82); color:var(--ivory); border:1px solid var(--line); border-radius:999px;
+    padding:0.25rem 0.65rem;
+  }
+  .product-photo.is-unavailable img{ opacity:0.45; filter:grayscale(0.4); }
+  .catalog-empty{
+    grid-column:1 / -1; text-align:center; padding:3.5rem 1.5rem; color:var(--ivory-faint);
+    border:1px dashed var(--line); border-radius:var(--radius-md); font-size:0.92rem;
+  }
+
+  /* ---------- GALERIE PRODUIT (fenêtre de détail) ---------- */
+  .gallery-overlay{
+    position:fixed; inset:0; background:rgba(5,5,5,0.94); z-index:400;
+    display:none; align-items:center; justify-content:center; padding:0;
+  }
+  .gallery-overlay.show{ display:flex; }
+  .gallery-modal{ position:relative; width:100%; height:100%; display:flex; flex-direction:column; outline:none; }
+  .gallery-close{
+    position:absolute; top:1rem; right:1rem; z-index:20; width:44px; height:44px; border-radius:50%;
+    background:rgba(5,5,5,0.78); border:1px solid var(--line); color:var(--ivory);
+    display:flex; align-items:center; justify-content:center; cursor:pointer;
+  }
+  .gallery-track-wrap{
+    position:relative; flex:1; min-height:0; overflow:hidden; touch-action:pan-y;
+    -webkit-touch-callout:none; -webkit-user-select:none; user-select:none;
+  }
+  .gallery-track{ display:flex; height:100%; transition:transform 0.42s cubic-bezier(0.4,0,0.2,1); }
+  .gslide{ flex:0 0 100%; height:100%; display:flex; align-items:center; justify-content:center; background:#000; }
+  .gslide img{ width:100%; height:100%; object-fit:contain; -webkit-user-drag:none; }
+  .gallery-arrow{
+    position:absolute; top:50%; transform:translateY(-50%); z-index:15; width:44px; height:44px; border-radius:50%;
+    background:rgba(5,5,5,0.55); border:1px solid var(--line); color:var(--ivory); font-size:1.3rem;
+    display:flex; align-items:center; justify-content:center; cursor:pointer;
+  }
+  .gallery-arrow.prev{ left:1rem; }
+  .gallery-arrow.next{ right:1rem; }
+  @media (pointer:coarse){ .gallery-arrow{ display:none; } } /* aucune flèche sur écran tactile */
+  .gallery-counter{
+    position:absolute; top:1rem; left:50%; transform:translateX(-50%); z-index:15;
+    font-size:0.8rem; color:var(--ivory); background:rgba(5,5,5,0.78); border:1px solid var(--line);
+    border-radius:999px; padding:0.3rem 0.8rem;
+  }
+  .gallery-thumbs{
+    display:flex; gap:0.5rem; overflow-x:auto; padding:0.6rem 1rem; background:var(--bg-panel);
+    border-top:1px solid var(--line); scroll-snap-type:x proximity; -webkit-overflow-scrolling:touch;
+  }
+  .gallery-thumb{
+    flex:0 0 auto; width:56px; height:56px; padding:0; border-radius:var(--radius-sm); overflow:hidden;
+    border:2px solid transparent; background:var(--bg-panel-2); opacity:0.7; scroll-snap-align:center;
+    transition:opacity 0.2s ease, border-color 0.2s ease;
+  }
+  .gallery-thumb img{ width:100%; height:100%; object-fit:cover; display:block; }
+  .gallery-thumb.active{ border-color:var(--rose-text); opacity:1; }
+  .loupe{
+    position:absolute; z-index:14; width:140px; height:140px; border-radius:50%;
+    border:2px solid var(--rose-text); box-shadow:0 6px 24px rgba(0,0,0,0.6);
+    background-color:#000; background-repeat:no-repeat; pointer-events:none;
+  }
+  .gallery-info{
+    padding:1.1rem 1.4rem calc(1.1rem + env(safe-area-inset-bottom, 0px));
+    background:var(--bg-panel); border-top:1px solid var(--line);
+    display:flex; align-items:center; justify-content:space-between; gap:1rem; flex-wrap:wrap;
+  }
+  .gallery-info-text{ display:flex; flex-direction:column; gap:0.2rem; }
+  .gallery-info .product-name{ font-size:1.15rem; cursor:default; }
+  .gallery-actions{ display:flex; align-items:center; gap:0.6rem; flex-wrap:wrap; }
+  @media (max-width:560px){
+    .loupe{ width:120px; height:120px; }
+    .gallery-info{ flex-direction:column; align-items:flex-start; }
+  }
+
+  /* ---------- RENDEZ-VOUS ---------- */
+  .rdv-wrap{ display:grid; grid-template-columns:1fr 1fr; gap:3rem; align-items:start; }
+  .rdv-note{ color:var(--ivory-muted); }
+  .rdv-note ul{ list-style:none; margin-top:1.4rem; display:flex; flex-direction:column; gap:0.7rem; }
+  .rdv-note li{ display:flex; gap:0.7rem; font-size:0.92rem; align-items:flex-start; }
+  .rdv-note li::before{ content:''; width:5px; height:5px; border-radius:50%; background:var(--rose-gold); margin-top:0.55rem; flex-shrink:0; }
+
+  form.rdv-form{
+    background:var(--bg-panel); border:1px solid var(--line); border-radius:var(--radius-lg);
+    padding:clamp(1.6rem, 3vw, 2.4rem); display:flex; flex-direction:column; gap:1.15rem;
+  }
+  .field{ display:flex; flex-direction:column; gap:0.4rem; }
+  .field label{ font-size:0.78rem; color:var(--ivory-muted); }
+  .field input, .field select{
+    font-family:var(--serif); font-size:0.95rem; color:var(--ivory);
+    background:var(--bg-panel-2); border:1px solid var(--line); border-radius:var(--radius-sm);
+    padding:0.75rem 1rem;
+  }
+  .field input:focus, .field select:focus, .filters select:focus, .field textarea:focus{
+    outline:none; border-color:var(--rose-gold);
+  }
+  .rdv-submit{
+    margin-top:0.3rem; background:var(--rose-gold); color:#1a0f0c; border:none;
+    padding:0.9rem 1.4rem; border-radius:999px; font-size:0.94rem; transition:background 0.25s ease, transform 0.2s ease;
+  }
+  .rdv-submit:hover{ background:var(--rose-gold-light); transform:translateY(-2px); }
+  .rdv-submit:disabled{ opacity:0.55; transform:none; cursor:default; }
+  .rdv-confirm{
+    display:none; text-align:center; padding:1.1rem; border-radius:var(--radius-sm);
+    background:rgba(216,165,150,0.1); border:1px solid var(--line); color:var(--ivory); font-size:0.9rem;
+  }
+  .rdv-confirm.show{ display:block; }
+
+  /* ---------- CONFIANCE ---------- */
+  .trust-grid{ display:grid; grid-template-columns:repeat(3, 1fr); gap:1.4rem; margin-top:2.6rem; }
+  .trust-card{
+    background:var(--bg-panel); border:1px solid var(--line); border-radius:var(--radius-md);
+    padding:2rem 1.6rem; text-align:left;
+  }
+  .trust-icon{ width:34px; height:34px; margin-bottom:1.1rem; color:var(--rose-gold); }
+  .trust-title{ font-family:var(--display); font-style:italic; font-size:1.1rem; margin-bottom:0.5rem; }
+  .trust-text{ font-size:0.9rem; color:var(--ivory-muted); }
+
+  /* ---------- CONTACT ---------- */
+  .contact-box{
+    display:flex; align-items:center; justify-content:space-between; gap:2rem; flex-wrap:wrap;
+    background:var(--bg-panel); border:1px solid var(--line); border-radius:var(--radius-lg);
+    padding:clamp(1.8rem, 4vw, 2.8rem);
+  }
+  .contact-lines{ display:flex; flex-direction:column; gap:0.4rem; color:var(--ivory-muted); font-size:0.95rem; margin-top:1rem; }
+
+  /* ---------- FOOTER ---------- */
+  footer{
+    padding:2.6rem clamp(1.25rem, 5vw, 3rem); border-top:1px solid var(--line);
+    display:flex; align-items:center; justify-content:space-between; gap:1rem; flex-wrap:wrap;
+  }
+  .footer-brand{ display:flex; align-items:center; gap:0.55rem; }
+  .footer-brand svg{ width:24px; height:24px; }
+  footer .footer-meta{ font-size:0.78rem; color:var(--ivory-faint); }
+
+  /* ---------- SERVICES PAR ZONE ---------- */
+  .section-flush{ padding-top:0; }
+  h2.section-title.section-title--sm{ font-size:clamp(1.4rem, 3vw, 1.9rem); max-width:none; }
+  .service-grid{ display:grid; grid-template-columns:repeat(4, minmax(0,1fr)); gap:1.4rem; margin-top:2.4rem; }
+  .service-card{
+    background:var(--bg-panel); border:1px solid var(--line); border-radius:var(--radius-md);
+    overflow:hidden; display:flex; flex-direction:column;
+  }
+  .service-photo{
+    aspect-ratio:4/3; position:relative; overflow:hidden;
+    background:radial-gradient(circle at 30% 30%, rgba(176,23,96,0.45), rgba(176,23,96,0.08) 60%, #0c0b0b 100%);
+  }
+  .service-photo img{ position:relative; width:100%; height:100%; object-fit:cover; display:block; }
+  .service-body{ padding:1.1rem 1.2rem 1.3rem; display:flex; flex-direction:column; gap:0.45rem; flex:1; }
+  .service-title{ font-family:var(--display); font-style:italic; font-weight:600; font-size:1.25rem; }
+  .service-text{ font-size:0.9rem; color:var(--ivory-muted); }
+  .service-price{ font-size:0.88rem; color:var(--rose-text); }
+  .service-btn{ margin-top:auto; align-self:flex-start; min-height:44px; padding:0.6rem 1.2rem; font-size:0.85rem; }
+
+  /* ---------- FILTRE ACTIF (pastille) ---------- */
+  .filter-chip{
+    display:inline-flex; align-items:center; gap:0.4rem; min-height:44px; padding:0 0.4rem 0 1rem;
+    border:1px solid var(--rose-gold); border-radius:999px; font-size:0.85rem; color:var(--ivory);
+  }
+  .filter-chip button{
+    width:36px; height:36px; border-radius:50%; background:transparent; border:none; color:var(--ivory);
+    display:inline-flex; align-items:center; justify-content:center;
+  }
+
+  /* ---------- NOTRE UNIVERS ---------- */
+  .univers-grid{ display:grid; grid-template-columns:repeat(auto-fit, minmax(170px, 1fr)); gap:1rem; margin-top:2.2rem; align-items:start; }
+  .univers-item{ border-radius:var(--radius-md); overflow:hidden; aspect-ratio:4/5; background:var(--bg-panel-2); border:1px solid var(--line); }
+  .univers-item img{ width:100%; height:100%; object-fit:cover; display:block; transition:transform 0.6s ease; }
+  @media (min-width:700px){ .univers-item:nth-child(even){ margin-top:1.4rem; } }
+  @media (hover:hover){ .univers-item:hover img{ transform:scale(1.04); } }
+
+  /* ---------- TÉMOIGNAGES ---------- */
+  .testi-list{ display:grid; grid-template-columns:repeat(auto-fit, minmax(260px, 1fr)); gap:1.2rem; margin-top:2.2rem; }
+  .testi-card{
+    background:var(--bg-panel); border:1px solid var(--line); border-radius:var(--radius-md);
+    padding:1.6rem 1.5rem; display:flex; flex-direction:column; gap:1rem;
+  }
+  .testi-text{ font-size:1rem; color:var(--ivory); }
+  .testi-meta{ display:flex; align-items:center; justify-content:space-between; gap:0.8rem; margin-top:auto; font-size:0.85rem; color:var(--ivory-muted); }
+  .testi-stars{ display:inline-flex; gap:2px; color:var(--rose-text); }
+  .testi-stars svg{ width:16px; height:16px; }
+
+  /* ---------- ÉQUIPE ---------- */
+  .team-list{ display:grid; grid-template-columns:repeat(auto-fit, minmax(210px, 1fr)); gap:1.2rem; margin-top:2.2rem; }
+  .team-card{ background:var(--bg-panel); border:1px solid var(--line); border-radius:var(--radius-md); overflow:hidden; }
+  .team-photo{ aspect-ratio:1/1; background:var(--bg-panel-2); }
+  .team-photo img{ width:100%; height:100%; object-fit:cover; display:block; }
+  .team-body{ padding:1rem 1.2rem 1.3rem; }
+  .team-name{ font-family:var(--display); font-style:italic; font-size:1.15rem; }
+  .team-role{ font-size:0.8rem; color:var(--rose-text); margin-bottom:0.5rem; }
+  .team-quote{ font-size:0.92rem; color:var(--ivory-muted); }
+
+  /* ---------- CONFIANCE : engagements activés + étapes ---------- */
+  .trust-grid{ grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); }
+  .steps{ margin-top:3rem; }
+  .steps-title{ font-family:var(--display); font-style:italic; font-weight:600; font-size:1.4rem; margin-bottom:1.6rem; }
+  .steps-track{ position:relative; }
+  .steps-list{ list-style:none; display:grid; grid-template-columns:repeat(4, minmax(0,1fr)); gap:1.2rem; }
+  .steps-line{
+    position:absolute; top:19px; left:12.5%; right:12.5%; height:2px;
+    background:linear-gradient(90deg, var(--rose-gold), var(--rose-gold-light));
+    transform-origin:left center; transform:scaleX(0); transition:transform 1.4s cubic-bezier(0.4,0,0.2,1);
+  }
+  .steps.in .steps-line{ transform:scaleX(1); }
+  .step{ position:relative; text-align:center; }
+  .step-dot{
+    position:relative; z-index:1; width:40px; height:40px; margin:0 auto 0.9rem; border-radius:50%;
+    background:var(--bg); border:2px solid var(--rose-gold); display:flex; align-items:center; justify-content:center; font-size:0.9rem;
+  }
+  .step-title{ font-family:var(--display); font-style:italic; font-size:1.05rem; margin-bottom:0.3rem; }
+  .step-text{ font-size:0.88rem; color:var(--ivory-muted); }
+  @media (prefers-reduced-motion: reduce){ .steps .steps-line{ transform:none; transition:none; } }
+
+  /* ---------- RENDEZ-VOUS : liste, état « ouverture prochaine », erreur ---------- */
+  .rdv-note{ color:var(--ivory-muted); margin-top:0.9rem; }
+  .rdv-steps{ list-style:none; margin-top:1.4rem; display:flex; flex-direction:column; gap:0.7rem; }
+  .rdv-steps li{ display:flex; gap:0.7rem; font-size:0.92rem; color:var(--ivory-muted); align-items:flex-start; }
+  .rdv-steps li::before{ content:''; width:5px; height:5px; border-radius:50%; background:var(--rose-gold); margin-top:0.6rem; flex-shrink:0; }
+  .rdv-closed{
+    background:var(--bg-panel); border:1px solid var(--line); border-radius:var(--radius-lg);
+    padding:clamp(1.6rem, 3vw, 2.4rem); display:flex; flex-direction:column; align-items:flex-start; gap:0.9rem;
+  }
+  .rdv-closed-title{ font-family:var(--display); font-style:italic; font-size:1.4rem; }
+  .rdv-closed-text{ color:var(--ivory-muted); }
+  .rdv-error{ color:#f3b0b0; font-size:0.88rem; }
+
+  /* ---------- BARRE D'ACTIONS MOBILE ---------- */
+  .mobile-cta{
+    display:none; position:fixed; left:0; right:0; bottom:0; z-index:180; gap:0.6rem;
+    padding:0.6rem 0.9rem calc(0.6rem + env(safe-area-inset-bottom, 0px));
+    background:rgba(5,5,5,0.97); border-top:1px solid var(--line);
+  }
+  .mobile-cta-btn{
+    flex:1; min-height:48px; display:inline-flex; align-items:center; justify-content:center; gap:0.5rem;
+    border:1px solid var(--rose-gold); border-radius:999px; font-size:0.95rem; color:var(--ivory);
+  }
+  .mobile-cta-btn.is-primary{ background:var(--rose-gold); color:#fff; }
+
+  /* ---------- ACCESSIBILITÉ : contraste et zones tactiles ---------- */
+  .eyebrow, .product-price, .fc-price, .product-choose, .btn-ghost, .pill-btn, .trust-icon{ color:var(--rose-text); }
+  .pill-btn.solid, .btn-primary, .rdv-submit, .product-choose:hover{ color:#fff; }
+  .pill-btn{ min-height:44px; }
+  .burger{ width:44px; height:44px; }
+  .mobile-close{ min-height:44px; min-width:44px; display:inline-flex; align-items:center; gap:0.4rem; padding:0 0.5rem; }
+  .gallery-close{ width:44px; height:44px; }
+  .filters select{ min-height:44px; }
+  .product-choose{ min-height:44px; }
+
+  /* ---------- FAVORIS ET « MA SÉLECTION » ---------- */
+  .product-media{ position:relative; }
+  .fav-btn{
+    position:absolute; top:0.5rem; right:0.5rem; z-index:3; width:44px; height:44px; border-radius:50%;
+    display:inline-flex; align-items:center; justify-content:center;
+    background:rgba(5,5,5,0.78); border:1px solid var(--line); color:var(--ivory); cursor:pointer;
+    transition:color 0.2s ease, border-color 0.2s ease;
+  }
+  .fav-btn svg{ width:20px; height:20px; fill:none; }
+  .fav-btn.is-on{ color:var(--rose-text); border-color:var(--rose-text); }
+  .fav-btn.is-on svg{ fill:currentColor; }
+  .fav-btn--inline{ position:static; flex-shrink:0; }
+  @media (hover:hover){ .fav-btn:hover{ border-color:var(--rose-text); } }
+
+  .sel-pill{
+    position:fixed; right:1rem; bottom:1.2rem; z-index:185; min-height:48px; padding:0 1.2rem 0 1rem;
+    display:inline-flex; align-items:center; gap:0.5rem; border-radius:999px; border:none;
+    background:var(--rose-gold); color:#fff; font-size:0.95rem; box-shadow:0 8px 24px rgba(0,0,0,0.5);
+  }
+  .sel-pill svg{ width:20px; height:20px; fill:none; }
+  body.gallery-open .sel-pill, body.nav-open .sel-pill, body.sel-open .sel-pill{ display:none; }
+
+  .sel-overlay{
+    position:fixed; inset:0; z-index:420; background:rgba(5,5,5,0.7);
+    opacity:0; transition:opacity 0.2s ease;
+  }
+  .sel-overlay.open{ opacity:1; }
+  .sel-drawer{
+    position:absolute; top:0; right:0; bottom:0; width:min(420px, 100%); background:var(--bg-panel);
+    border-left:1px solid var(--line); display:flex; flex-direction:column; outline:none;
+    transform:translateX(100%); transition:transform 0.25s ease;
+  }
+  .sel-overlay.open .sel-drawer{ transform:none; }
+  .sel-head{ display:flex; align-items:center; justify-content:space-between; padding:1rem 1.2rem; border-bottom:1px solid var(--line); }
+  .sel-title{ font-family:var(--display); font-style:italic; font-size:1.3rem; }
+  .sel-close, .sel-remove{
+    width:44px; height:44px; border-radius:50%; background:transparent; border:1px solid var(--line);
+    color:var(--ivory-muted); display:inline-flex; align-items:center; justify-content:center; flex-shrink:0;
+  }
+  .sel-list{ list-style:none; flex:1; overflow-y:auto; padding:0.6rem 1.2rem; }
+  .sel-item{ display:flex; align-items:center; gap:0.8rem; padding:0.7rem 0; border-bottom:1px solid var(--line); }
+  .sel-item img{ width:56px; height:56px; border-radius:var(--radius-sm); object-fit:cover; flex-shrink:0; background:var(--bg-panel-2); }
+  .sel-text{ flex:1; min-width:0; }
+  .sel-name{ font-family:var(--display); font-style:italic; }
+  .sel-meta{ font-size:0.8rem; color:var(--ivory-muted); }
+  .sel-price{ font-size:0.88rem; color:var(--rose-text); }
+  .sel-item.is-off .sel-name, .sel-item.is-off .sel-price{ opacity:0.55; }
+  .sel-foot{
+    padding:1rem 1.2rem calc(1rem + env(safe-area-inset-bottom, 0px)); border-top:1px solid var(--line);
+    display:flex; flex-direction:column; gap:0.7rem;
+  }
+  .sel-note{ font-size:0.82rem; color:var(--ivory-muted); }
+  .sel-note p + p{ margin-top:0.4rem; }
+  .sel-send{ justify-content:center; min-height:48px; }
+  @media (max-width:560px){ .sel-drawer{ width:100%; border-left:none; } }
+
+  /* ---------- ÉCLATS : reflet diagonal + 3 petites étoiles, une seule fois au survol ou au toucher ---------- */
+  .shine{ position:relative; overflow:hidden; }
+  .shine::after{
+    content:''; position:absolute; top:-20%; bottom:-20%; left:-60%; width:50%; z-index:1; pointer-events:none;
+    background:linear-gradient(115deg, rgba(255,255,255,0) 20%, rgba(255,255,255,0.32) 50%, rgba(255,255,255,0) 80%);
+    transform:translateX(0) skewX(-14deg); opacity:0;
+  }
+  .shine::before{
+    content:''; position:absolute; inset:0; z-index:1; pointer-events:none; opacity:0; transform:scale(0.7);
+    transition:opacity 0.4s ease, transform 0.5s ease;
+    background:
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23F8CBD6' d='M12 0l2.6 9.4L24 12l-9.4 2.6L12 24l-2.6-9.4L0 12l9.4-2.6z'/%3E%3C/svg%3E") 18% 22% / 11px no-repeat,
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23F8CBD6' d='M12 0l2.6 9.4L24 12l-9.4 2.6L12 24l-2.6-9.4L0 12l9.4-2.6z'/%3E%3C/svg%3E") 80% 30% / 8px no-repeat,
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23F8CBD6' d='M12 0l2.6 9.4L24 12l-9.4 2.6L12 24l-2.6-9.4L0 12l9.4-2.6z'/%3E%3C/svg%3E") 64% 76% / 10px no-repeat;
+  }
+  @keyframes shine-sweep{
+    from{ transform:translateX(0) skewX(-14deg); opacity:1; }
+    to{ transform:translateX(420%) skewX(-14deg); opacity:1; }
+  }
+  .shine.is-shining::after{ animation:shine-sweep 0.9s ease-out 1 both; }
+  .shine.is-shining::before{ opacity:0.9; transform:scale(1); }
+  @media (hover:hover){
+    .shine:hover::after{ animation:shine-sweep 0.9s ease-out 1 both; }
+    .shine:hover::before{ opacity:0.9; transform:scale(1); }
+  }
+  .product-photo .product-photo-count, .product-photo .unavailable-badge{ z-index:2; }
+  @media (prefers-reduced-motion: reduce){ .shine::after, .shine::before{ display:none; } }
+
+  /* ---------- RESPONSIVE ---------- */
+  @media (max-width: 980px){
+    nav.main-nav{ display:none; }
+    .burger{ display:flex; }
+    .catalog-grid{ grid-template-columns:repeat(2, 1fr); }
+    .rdv-wrap{ grid-template-columns:1fr; }
+    .trust-grid{ grid-template-columns:1fr; }
+  }
+  @media (max-width: 860px){
+    .hero{ padding:6.5rem clamp(1.25rem, 5vw, 3rem) 3rem; }
+    .hero-inner{ grid-template-columns:1fr; gap:2rem; }
+    .hero-title{ max-width:none; }
+    .service-grid{ grid-template-columns:repeat(2, minmax(0,1fr)); }
+    .steps-list{ grid-template-columns:1fr; gap:1.4rem; }
+    .step{ display:grid; grid-template-columns:40px 1fr; column-gap:1rem; text-align:left; }
+    .step-dot{ margin:0; grid-row:1 / span 2; }
+    .steps-line{ top:19px; bottom:19px; left:19px; right:auto; width:2px; height:auto; transform-origin:center top; transform:scaleY(0); }
+    .steps.in .steps-line{ transform:scaleY(1); }
+  }
+  @media (max-width: 700px){
+    body{ padding-bottom:calc(76px + env(safe-area-inset-bottom, 0px)); }
+    .mobile-cta{ display:flex; }
+    body.gallery-open .mobile-cta, body.nav-open .mobile-cta, body.sel-open .mobile-cta{ display:none; }
+    .sel-pill{ bottom:calc(76px + env(safe-area-inset-bottom, 0px) + 0.75rem); }
+    .hero-logo{ width:min(46vw, 170px); }
+  }
+  @media (max-width: 380px){
+    .service-grid{ grid-template-columns:1fr; }
+  }
+  @media (max-width: 560px){
+    .catalog-grid{ grid-template-columns:1fr 1fr; gap:1rem; }
+    .header-actions .pill-btn span.pill-text{ display:none; }
+    .pill-btn{ padding:0.6rem; min-width:44px; justify-content:center; }
+    .pill-btn svg{ width:16px; height:16px; }
+  }
+  @media (max-width: 380px){
+    .catalog-grid{ grid-template-columns:1fr; }
+    section{ padding-left:1rem; padding-right:1rem; }
+  }
+</style>
+</head>
+<body>
+
+  <!-- ============ SPLASH ============ -->
+  <div id="splash">
+    <div class="logo-stage">
+      <svg viewBox="0 0 1280 1280" xmlns="http://www.w3.org/2000/svg">
+        <g id="ksLayer" transform="translate(130,280)" fill="none" stroke="var(--rose-gold)" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M 181,124 L 185,122 L 193,120 L 194,119 L 197,119 L 198,118 L 204,118 L 205,117 L 212,117 L 213,116 L 263,116 L 264,117 L 283,117 L 284,118 L 319,118 L 320,117 L 331,117 L 332,116 L 344,115 L 345,114 L 349,114 L 350,113 L 353,113 L 354,112 L 360,112 L 364,116" pathLength="1" stroke-width="4.0" style="--delay:0.000s"/>
+        <path d="M 232,358 L 232,364 L 233,365 L 233,368 L 234,369 L 234,371 L 235,372 L 235,374 L 237,378 L 239,380 L 241,384 L 250,393 L 251,393 L 256,397 L 258,397 L 262,399 L 265,399 L 266,400 L 287,400 L 288,399 L 296,397 L 304,393 L 306,391 L 309,390 L 311,388 L 315,386 L 328,373 L 328,372 L 334,365 L 335,362 L 338,359 L 339,356 L 341,354 L 342,350 L 349,337 L 349,335 L 352,330 L 352,328 L 354,324 L 355,317 L 356,316 L 357,310 L 358,309 L 359,303 L 360,302 L 360,298 L 361,297 L 361,291 L 362,290 L 362,286 L 363,285 L 364,270 L 366,267" pathLength="1" stroke-width="6.39" style="--delay:0.068s"/>
+        <path d="M 364,116 L 364,175 L 365,176 L 365,207 L 366,208 L 365,265 L 366,266" pathLength="1" stroke-width="16.0" style="--delay:0.135s"/>
+        <path d="M 367,102 L 366,103 L 365,115 L 364,116" pathLength="1" stroke-width="15.98" style="--delay:0.203s"/>
+        <path d="M 367,267 L 375,267" pathLength="1" stroke-width="18.0" style="--delay:0.271s"/>
+        <path d="M 367,101 L 367,98 L 368,97 L 368,89 L 370,85 L 371,78 L 374,74 L 377,68 L 380,65 L 382,64 L 385,64 L 386,63 L 388,64 L 393,64 L 395,65 L 399,69 L 399,71 L 400,72 L 400,77 L 399,78 L 399,81 L 396,87 L 385,98 L 383,98 L 380,101 L 377,101 L 376,102 L 368,102" pathLength="1" stroke-width="7.6" style="--delay:0.338s"/>
+        <path d="M 376,266 L 393,250 L 393,249 L 401,240 L 405,233 L 408,230 L 413,220 L 416,217 L 418,212 L 420,210 L 423,204 L 424,200 L 426,198 L 429,192 L 429,190 L 434,181 L 434,179 L 438,172 L 438,170 L 446,154 L 446,152 L 448,149 L 448,147 L 458,127 L 458,125 L 460,123 L 460,121 L 463,115 L 465,113 L 465,111 L 469,103 L 471,101 L 473,96 L 475,94 L 478,88 L 484,81 L 484,80 L 492,72 L 493,72 L 495,70 L 501,67 L 503,67 L 504,66 L 509,66 L 510,67 L 516,68 L 520,71 L 523,77 L 523,79 L 524,80 L 525,88" pathLength="1" stroke-width="11.59" style="--delay:0.406s"/>
+        <path d="M 493,392 L 491,394 L 479,394 L 478,393 L 474,393 L 473,392 L 471,392 L 463,388 L 461,386 L 458,385 L 451,379 L 450,379 L 429,358 L 429,357 L 425,353 L 425,352 L 422,349 L 422,348 L 414,337 L 406,321 L 404,319 L 380,271 L 376,267" pathLength="1" stroke-width="14.0" style="--delay:0.474s"/>
+        <path d="M 499,392 L 494,392" pathLength="1" stroke-width="19.38" style="--delay:0.542s"/>
+        <path d="M 499,392 L 504,387 L 510,385 L 534,361 L 534,360 L 539,355 L 539,354 L 546,346 L 546,345 L 550,340 L 552,335 L 555,332 L 558,325 L 560,323 L 561,318 L 563,316 L 565,312 L 565,310 L 567,307 L 568,301 L 570,298 L 570,296 L 572,292 L 572,287 L 573,286 L 573,282 L 574,281 L 574,266 L 573,265 L 573,261 L 569,254 L 564,250 L 562,250 L 561,249 L 557,249 L 556,248 L 550,248 L 549,249 L 544,249 L 543,250 L 541,250 L 538,252 L 534,253 L 532,255 L 528,257 L 525,260 L 524,260 L 511,273 L 511,274 L 503,284 L 497,296 L 497,298 L 494,303 L 494,305 L 493,306 L 493,308 L 491,312 L 491,316 L 490,317 L 490,321 L 489,322 L 489,327 L 488,328 L 488,333 L 487,334 L 487,362 L 488,363 L 489,373 L 490,374 L 490,377 L 491,378 L 491,381 L 492,382 L 492,388 L 493,389 L 493,391" pathLength="1" stroke-width="14.39" style="--delay:0.609s"/>
+        <path d="M 528,448 L 526,445 L 526,442 L 524,440 L 522,435 L 520,433 L 516,425 L 512,420 L 508,412 L 504,407 L 501,401 L 501,397 L 500,396 L 500,393 L 499,392" pathLength="1" stroke-width="15.18" style="--delay:0.677s"/>
+        <path d="M 530,449 L 536,443 L 541,442 L 549,436 L 552,435 L 554,433 L 557,432 L 564,427 L 569,425 L 571,423 L 587,415 L 589,415 L 592,413 L 594,413 L 599,409" pathLength="1" stroke-width="4.39" style="--delay:0.745s"/>
+        <path d="M 530,449 L 532,451 L 532,457 L 533,458 L 533,461 L 534,462 L 534,465 L 535,466 L 535,469 L 536,470 L 536,491 L 535,492 L 535,498 L 534,499 L 534,502 L 531,507 L 530,512 L 525,522 L 520,528 L 518,532 L 505,544 L 504,544 L 496,550 L 490,553 L 488,553 L 484,555 L 481,555 L 480,556 L 475,556 L 474,557 L 465,557 L 464,556 L 459,556 L 458,555 L 454,554 L 448,548 L 446,544 L 446,541 L 445,540 L 445,529 L 446,528 L 446,524 L 448,520 L 450,518 L 450,516 L 453,513 L 453,512 L 459,505 L 459,504 L 482,482 L 483,482 L 487,478 L 488,478 L 492,474 L 496,472 L 503,466 L 504,466 L 506,464 L 513,460 L 516,457 L 520,455 L 522,455 L 528,449" pathLength="1" stroke-width="8.0" style="--delay:0.812s"/>
+        </g>
+
+        <g id="restLayer">
+          <g transform="translate(730,440)">
+            <g transform="translate(0.000000,260.000000) scale(0.100000,-0.100000)" fill="#B01760" stroke="none">
+<path d="M2800 1598 c0 -5 -17 -9 -37 -8 -21 1 -40 1 -43 0 -3 -1 -30 -4 -60
+-6 -69 -5 -188 -27 -356 -64 -73 -17 -148 -30 -167 -30 -45 0 -52 -11 -31 -52
+52 -103 147 -134 269 -88 79 30 206 68 248 75 36 6 38 7 23 24 -22 24 -20 54
+5 77 20 18 21 18 40 -6 14 -18 18 -34 14 -57 -3 -17 -1 -34 5 -38 5 -3 10 -1
+10 4 0 7 24 11 60 11 33 0 60 -4 60 -9 0 -12 33 -9 42 4 5 7 14 6 28 -3 14 -8
+20 -9 20 -1 0 22 249 -27 359 -71 30 -11 56 -19 59 -16 34 35 -249 194 -400
+224 -45 9 -85 20 -88 23 -9 11 -60 17 -60 7z M1036 1580 c-117 -21 -331 -121
+-410 -191 -54 -48 -42 -57 36 -26 130 52 256 72 448 72 197 -1 259 -11 416
+-70 161 -61 254 -43 305 57 29 58 26 68 -24 68 -23 0 -96 13 -162 29 -244 60
+-485 84 -609 61z M2031 1462 c-1 -22 25 -76 45 -92 17 -14 16 -12 -2 20 -11
+19 -25 46 -32 60 -6 14 -11 19 -11 12z M3035 1080 c-3 -5 -17 -10 -29 -10 -15
+0 -26 -7 -29 -20 -3 -11 -12 -20 -21 -20 -9 0 -16 -4 -16 -10 0 -14 -39 -37
+-127 -76 -43 -18 -68 -34 -56 -34 25 0 131 37 151 53 10 8 16 7 23 -4 5 -8 9
+-9 9 -4 0 6 16 19 35 29 19 11 35 24 35 29 0 5 11 20 25 33 25 23 33 44 16 44
+-6 0 -13 -4 -16 -10z M788 1073 c-23 -6 -23 -17 4 -69 12 -24 18 -47 14 -51
+-4 -4 -37 -7 -74 -7 -65 0 -158 34 -177 64 -10 17 -35 11 -35 -8 0 -33 115
+-122 157 -122 7 0 13 -4 13 -10 0 -14 -46 -12 -108 3 -53 14 -62 13 -62 -9 0
+-15 89 -64 115 -64 29 0 15 -19 -17 -22 -81 -8 -16 -48 78 -48 54 0 72 -13 33
+-23 -45 -12 -13 -32 49 -32 67 0 73 -3 42 -23 -49 -30 22 -44 87 -17 45 19 44
+20 37 -15 -7 -34 5 -38 46 -15 32 18 40 18 40 0 0 -19 24 -19 40 0 16 19 40
+19 40 1 0 -27 21 -28 47 -5 18 17 27 20 30 12 6 -17 28 -16 42 1 7 8 39 17 71
+21 33 4 63 11 66 16 3 6 14 7 23 4 11 -3 25 3 36 15 10 11 23 20 30 20 45 0
+97 50 111 104 4 19 17 32 35 40 16 6 29 16 29 23 0 17 -9 16 -81 -2 -88 -23
+-231 -34 -318 -24 -89 10 -211 46 -218 66 -3 7 -9 13 -14 13 -19 0 -89 53 -89
+67 0 8 -13 20 -30 26 -16 6 -30 14 -30 18 0 16 -47 55 -62 52z M3116 1045
+c-11 -14 -25 -24 -33 -21 -7 3 -13 -1 -13 -9 0 -7 -9 -17 -20 -20 -11 -3 -20
+-12 -20 -20 0 -8 -9 -16 -19 -20 -11 -3 -34 -20 -52 -36 -18 -16 -38 -28 -45
+-25 -7 3 -15 -1 -17 -9 -8 -18 -88 -43 -180 -55 -88 -11 -245 1 -324 25 -26 8
+-56 15 -65 15 -27 0 -22 -19 8 -32 17 -8 34 -31 49 -64 21 -48 63 -84 98 -84
+6 0 18 -7 28 -16 9 -8 28 -17 41 -20 71 -12 146 -31 165 -42 12 -6 28 -9 37
+-6 8 3 25 -1 38 -10 31 -22 38 -20 38 9 0 31 3 31 41 3 29 -22 31 -22 43 -6
+12 17 16 17 44 2 38 -19 54 -11 46 22 -7 28 -7 28 39 9 46 -19 97 -20 97 -1 0
+8 -7 16 -15 20 -32 12 -12 21 47 21 71 0 87 17 34 35 -55 18 -43 26 32 22 71
+-4 126 10 120 31 -3 6 -19 13 -36 15 -44 4 -40 15 11 30 24 7 56 24 72 37 26
+21 28 24 12 30 -9 4 -37 2 -62 -4 -53 -13 -105 -14 -105 -2 0 5 13 12 29 16
+67 15 167 103 143 127 -8 8 -26 1 -60 -21 -54 -34 -138 -55 -189 -45 -44 8
+-50 20 -24 55 11 15 21 37 21 49 0 28 -31 26 -54 -5z M900 1040 c0 -11 34 -37
+58 -44 12 -4 22 -11 22 -15 0 -3 8 -7 18 -8 9 -1 55 -15 102 -32 63 -23 102
+-30 150 -30 l65 0 -87 19 c-138 29 -268 77 -268 99 0 5 -13 11 -30 13 -16 3
+-30 2 -30 -2z M3717 503 c-157 -189 -327 -312 -527 -381 -139 -48 -206 -57
+-410 -56 -203 1 -286 13 -745 108 -407 84 -654 115 -975 123 -410 10 -636 -26
+-967 -155 -80 -31 -93 -40 -93 -59 0 -29 7 -28 100 1 195 62 514 104 705 92
+376 -24 873 -89 1202 -156 87 -18 138 -20 599 -20 l503 0 76 30 c171 68 302
+151 428 269 114 109 187 205 187 249 0 17 -4 32 -9 32 -5 0 -38 -35 -74 -77z"/>
+</g>
+          
+          <g transform="translate(0.000000,260.000000) scale(0.100000,-0.100000)" fill="#F5EFEC" stroke="none">
+<path d="M2827 1713 c-16 -15 -7 -62 13 -68 11 -3 20 -11 20 -16 0 -20 16 -7
+27 22 15 39 2 69 -31 69 -12 0 -26 -3 -29 -7z M2672 1575 c-47 -46 -52 -48
+-90 -45 -12 1 -25 -6 -28 -15 -9 -23 -2 -26 34 -16 29 9 32 8 32 -12 0 -30 11
+-44 43 -56 39 -15 50 -14 43 4 -3 8 -1 15 4 15 14 0 13 67 -1 93 -10 18 -8 24
+15 43 30 26 32 34 10 34 -8 0 -36 -20 -62 -45z m8 -105 c-20 -12 -33 -1 -19
+16 9 11 15 12 23 4 8 -8 7 -13 -4 -20z M2900 1390 c-14 -35 -1 -60 32 -60 15
+0 18 5 13 21 -5 14 -2 25 6 30 11 8 10 12 -5 24 -27 21 -32 19 -46 -15z M970
+1207 c-36 -14 -76 -42 -114 -79 -33 -31 -65 -59 -73 -62 -7 -3 -13 -10 -13
+-17 0 -6 7 -8 15 -5 10 4 32 -11 63 -43 44 -45 127 -111 141 -111 4 0 6 51 6
+113 0 104 2 117 28 166 15 29 27 55 27 57 0 8 -27 2 -80 -19z M2905 1183 c4
+-10 17 -49 29 -86 17 -56 18 -71 8 -88 -7 -11 -10 -24 -7 -29 3 -5 -2 -27 -11
+-50 -9 -22 -14 -43 -12 -46 11 -11 112 51 167 102 39 36 64 52 75 48 12 -4 16
+0 16 16 0 13 -5 20 -12 17 -7 -2 -33 13 -57 34 -48 43 -153 99 -184 99 -14 0
+-17 -4 -12 -17z"/>
+</g>
+</g>
+          <g transform="translate(130,680)">
+            <g transform="translate(0.000000,220.000000) scale(0.100000,-0.100000)" fill="#FFFFFF" stroke="none">
+<path d="M3810 1734 c-246 -41 -374 -143 -434 -343 -20 -69 -21 -199 -1 -276
+47 -180 200 -336 366 -374 63 -15 195 -13 255 3 119 32 217 112 248 204 17 49
+16 49 -28 -12 -40 -53 -135 -97 -227 -104 -55 -4 -84 0 -152 22 -217 67 -347
+255 -347 500 0 188 91 309 255 337 58 10 82 9 141 -4 93 -20 188 -67 242 -120
+l42 -41 0 91 0 90 -72 11 c-85 13 -252 22 -288 16z M5880 1727 c-131 -30 -210
+-99 -218 -190 -8 -105 55 -176 315 -349 89 -60 177 -126 196 -148 56 -65 58
+-127 5 -177 -29 -27 -32 -28 -141 -28 -102 1 -117 3 -171 29 -75 37 -121 77
+-157 140 l-29 51 0 -88 0 -87 33 -20 c103 -64 303 -83 427 -42 114 38 172 104
+172 192 0 94 -65 167 -264 297 -166 108 -254 177 -273 214 -25 48 -19 106 13
+139 42 42 100 54 191 41 129 -20 223 -76 282 -171 l29 -45 0 87 0 87 -52 24
+c-29 14 -71 30 -93 36 -64 18 -204 22 -265 8z M9315 1726 c-124 -30 -245 -127
+-301 -241 -55 -113 -42 -289 32 -437 120 -238 359 -319 599 -203 215 103 293
+321 205 572 -42 119 -129 227 -222 274 -90 46 -212 60 -313 35z m159 -55 c110
+-48 221 -210 261 -378 24 -100 17 -250 -14 -314 -29 -62 -83 -114 -137 -135
+-132 -50 -304 58 -398 250 -58 117 -76 191 -76 307 1 140 44 224 142 274 45
+22 62 26 114 22 33 -2 82 -14 108 -26z M6327 1724 c-4 -4 -7 -28 -7 -53 l0
+-45 28 26 c39 38 73 48 163 48 l79 0 0 -445 0 -445 75 0 75 0 0 445 0 445 83
+0 c88 -1 117 -10 166 -52 l31 -27 0 -294 c0 -328 4 -353 66 -425 90 -105 303
+-139 457 -73 64 28 131 92 156 151 21 48 21 62 19 397 l-3 348 -44 3 c-23 2
+-41 0 -39 -5 58 -116 70 -205 66 -482 -3 -212 -5 -229 -26 -268 -29 -56 -56
+-80 -121 -111 -104 -48 -245 -26 -319 51 -60 62 -61 72 -63 447 0 189 -3 349
+-6 356 -4 10 -90 13 -417 14 -227 0 -415 -3 -419 -6z M7877 1723 c-4 -3 -7
+-210 -7 -460 l0 -453 244 0 c156 0 255 4 277 11 143 49 239 222 241 435 2 256
+-105 430 -287 463 -63 12 -457 15 -468 4z m386 -39 c145 -49 239 -243 224
+-463 -10 -148 -66 -271 -155 -338 -56 -43 -98 -53 -214 -53 l-98 0 0 435 0
+435 98 0 c63 0 115 -6 145 -16z M8748 1578 c0 -84 -2 -291 -2 -460 l-1 -308
+73 0 72 0 -2 458 -3 457 -67 3 -68 3 -2 -153z M340 1230 l0 -490 75 0 75 0 0
+251 c0 156 4 249 10 247 5 -1 85 -91 177 -198 92 -108 188 -219 213 -248 l45
+-52 103 0 103 0 -243 281 c-254 294 -283 328 -277 333 2 1 76 58 164 127 209
+163 223 172 291 208 l59 30 -73 1 c-68 0 -73 -1 -67 -19 4 -13 -1 -27 -12 -38
+-36 -35 -465 -368 -479 -371 -12 -3 -14 31 -14 212 l0 216 -75 0 -75 0 0 -490z
+M1180 1230 l0 -490 325 0 325 0 0 62 0 62 -27 -26 c-62 -58 -83 -63 -285 -66
+l-188 -4 0 476 0 476 -75 0 -75 0 0 -490z M1880 1230 l0 -491 78 3 77 3 0 485
+0 485 -77 3 -78 3 0 -491z M2200 1230 l0 -490 57 0 c48 0 54 2 40 13 -25 18
+-44 73 -56 160 -15 104 -15 710 -1 705 11 -3 131 -155 493 -620 106 -136 195
+-247 200 -248 4 0 7 218 7 485 l0 485 -51 0 c-48 0 -49 -1 -33 -17 44 -44 49
+-77 52 -342 2 -157 0 -252 -6 -250 -5 2 -31 31 -58 64 -27 34 -138 170 -248
+303 l-198 242 -99 0 -99 0 0 -490z M3110 1230 l0 -490 75 0 75 0 0 490 0 490
+-75 0 -75 0 0 -490z M2378 333 c-16 -4 -18 -20 -18 -154 l0 -149 81 0 c71 0
+80 2 77 17 -2 14 -15 19 -56 21 l-52 3 0 129 c0 71 -3 131 -7 133 -5 2 -16 2
+-25 0z M3064 326 c-20 -9 -35 -26 -42 -45 -20 -56 12 -100 83 -117 40 -9 75
+-31 75 -49 0 -42 -79 -62 -102 -25 -8 12 -24 20 -40 20 -24 0 -26 -3 -19 -22
+24 -65 129 -82 182 -29 55 56 30 111 -67 145 -54 19 -59 24 -59 51 0 27 3 30
+37 33 29 2 40 -2 50 -17 16 -27 58 -28 58 -3 0 51 -95 86 -156 58z M3383 333
+c-10 -4 -13 -43 -13 -154 l0 -149 25 0 c24 0 25 2 25 65 l0 65 70 0 70 0 0
+-65 c0 -63 1 -65 25 -65 l25 0 0 150 0 150 -25 0 c-24 0 -25 -2 -25 -65 l0
+-65 -70 0 -70 0 0 64 c0 63 -8 79 -37 69z M6635 326 c-65 -29 -95 -76 -95
+-149 0 -51 28 -100 72 -127 40 -24 116 -26 158 -5 27 14 60 51 60 67 0 17 -44
+7 -72 -17 -69 -58 -168 -7 -168 86 0 37 24 85 49 99 34 17 96 12 116 -10 18
+-19 75 -28 75 -12 0 14 -54 60 -83 71 -37 14 -75 13 -112 -3z M7666 330 c-67
+-20 -111 -89 -104 -162 9 -84 69 -140 153 -140 61 0 105 28 133 82 37 74 31
+83 -63 83 -67 1 -80 -2 -83 -16 -3 -14 5 -17 52 -17 64 0 71 -12 32 -57 -20
+-23 -32 -28 -71 -28 -40 0 -51 5 -76 33 -63 70 -19 181 72 182 21 0 47 -8 62
+-20 25 -20 77 -28 77 -12 0 16 -43 54 -76 68 -37 16 -65 16 -108 4z M2688 196
+c-26 -73 -50 -141 -54 -150 -5 -12 0 -16 19 -16 18 0 28 8 37 30 12 29 15 30
+77 30 62 0 64 -1 74 -30 8 -22 17 -30 35 -30 13 0 24 3 24 7 0 3 -23 71 -52
+150 -51 142 -52 143 -83 143 -30 0 -31 -1 -77 -134z m105 1 c9 -30 17 -57 17
+-60 0 -4 -20 -7 -45 -7 -50 0 -51 2 -31 51 7 19 16 42 19 52 11 30 23 19 40
+-36z M4049 303 c-6 -16 -30 -83 -54 -151 l-44 -122 29 0 c23 0 30 5 35 30 6
+30 8 30 71 30 63 0 65 -1 75 -30 8 -22 17 -30 35 -30 13 0 24 4 24 9 0 7 -74
+221 -95 274 -5 11 -18 17 -36 17 -23 0 -32 -6 -40 -27z m65 -100 c24 -69 22
+-73 -29 -73 -25 0 -45 2 -45 4 0 3 20 62 35 104 9 24 23 11 39 -35z M4350 180
+l0 -150 25 0 25 0 0 105 c0 58 3 105 8 104 4 0 37 -47 74 -105 56 -87 72 -104
+93 -104 l25 0 0 150 0 150 -25 0 -25 0 0 -100 c0 -55 -3 -100 -7 -100 -5 0
+-37 45 -73 100 -56 86 -69 100 -92 100 l-28 0 0 -150z M4750 180 l0 -150 75 0
+c128 0 187 48 187 151 0 102 -59 149 -184 149 l-78 0 0 -150z m181 81 c24 -25
+29 -38 29 -80 0 -73 -28 -103 -103 -109 l-57 -4 0 111 0 111 51 0 c43 0 55 -5
+80 -29z M5360 180 l0 -150 25 0 c24 0 25 3 25 60 l0 60 35 0 c107 0 161 85 96
+151 -27 27 -35 29 -105 29 l-76 0 0 -150z m150 91 c14 -28 13 -38 -10 -61 -12
+-12 -33 -20 -55 -20 l-35 0 0 50 0 50 45 0 c34 0 47 -5 55 -19z M5690 180 l0
+-150 25 0 25 0 0 150 0 150 -25 0 -25 0 0 -150z M5890 180 l0 -150 85 0 c78 0
+85 2 85 20 0 18 -7 20 -60 20 l-60 0 0 45 0 45 55 0 c48 0 55 3 55 19 0 17 -8
+20 -52 23 l-53 3 -3 43 -3 42 60 0 c54 0 61 2 61 20 0 18 -7 20 -85 20 l-85 0
+0 -150z M6200 180 l0 -150 25 0 c24 0 25 3 25 61 0 57 1 60 22 57 15 -2 32
+-21 53 -58 26 -47 35 -55 63 -58 l32 -3 -36 62 c-29 49 -34 63 -23 70 8 5 18
+9 22 9 15 0 35 65 30 93 -10 49 -45 67 -134 67 l-79 0 0 -150z m154 88 c20
+-29 20 -34 -4 -58 -13 -13 -33 -20 -60 -20 l-40 0 0 50 0 50 44 0 c35 0 48 -5
+60 -22z M6970 180 l0 -150 25 0 25 0 0 150 0 150 -25 0 -25 0 0 -150z M7170
+180 l0 -150 25 0 25 0 0 105 c0 58 3 105 8 105 4 0 38 -48 76 -105 55 -84 73
+-105 92 -105 l24 0 0 150 0 150 -26 0 -25 0 2 -95 c2 -81 -3 -120 -14 -104 -1
+2 -32 48 -67 102 -56 84 -68 97 -92 97 l-28 0 0 -150z"/>
+</g>
+          </g>
+        </g>
+      </svg>
+    </div>
+    <div class="loader"><div class="loader-fill"></div></div>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header id="siteHeader">
+    <a href="#accueil" class="brand">
+      <svg class="ks-mark" viewBox="160 40 460 540" xmlns="http://www.w3.org/2000/svg">
+        <path d="M 181,124 L 185,122 L 193,120 L 194,119 L 197,119 L 198,118 L 204,118 L 205,117 L 212,117 L 213,116 L 263,116 L 264,117 L 283,117 L 284,118 L 319,118 L 320,117 L 331,117 L 332,116 L 344,115 L 345,114 L 349,114 L 350,113 L 353,113 L 354,112 L 360,112 L 364,116" stroke-width="4.0"/>
+        <path d="M 232,358 L 232,364 L 233,365 L 233,368 L 234,369 L 234,371 L 235,372 L 235,374 L 237,378 L 239,380 L 241,384 L 250,393 L 251,393 L 256,397 L 258,397 L 262,399 L 265,399 L 266,400 L 287,400 L 288,399 L 296,397 L 304,393 L 306,391 L 309,390 L 311,388 L 315,386 L 328,373 L 328,372 L 334,365 L 335,362 L 338,359 L 339,356 L 341,354 L 342,350 L 349,337 L 349,335 L 352,330 L 352,328 L 354,324 L 355,317 L 356,316 L 357,310 L 358,309 L 359,303 L 360,302 L 360,298 L 361,297 L 361,291 L 362,290 L 362,286 L 363,285 L 364,270 L 366,267" stroke-width="6.39"/>
+        <path d="M 364,116 L 364,175 L 365,176 L 365,207 L 366,208 L 365,265 L 366,266" stroke-width="16.0"/>
+        <path d="M 367,102 L 366,103 L 365,115 L 364,116" stroke-width="15.98"/>
+        <path d="M 367,267 L 375,267" stroke-width="18.0"/>
+        <path d="M 367,101 L 367,98 L 368,97 L 368,89 L 370,85 L 371,78 L 374,74 L 377,68 L 380,65 L 382,64 L 385,64 L 386,63 L 388,64 L 393,64 L 395,65 L 399,69 L 399,71 L 400,72 L 400,77 L 399,78 L 399,81 L 396,87 L 385,98 L 383,98 L 380,101 L 377,101 L 376,102 L 368,102" stroke-width="7.6"/>
+        <path d="M 376,266 L 393,250 L 393,249 L 401,240 L 405,233 L 408,230 L 413,220 L 416,217 L 418,212 L 420,210 L 423,204 L 424,200 L 426,198 L 429,192 L 429,190 L 434,181 L 434,179 L 438,172 L 438,170 L 446,154 L 446,152 L 448,149 L 448,147 L 458,127 L 458,125 L 460,123 L 460,121 L 463,115 L 465,113 L 465,111 L 469,103 L 471,101 L 473,96 L 475,94 L 478,88 L 484,81 L 484,80 L 492,72 L 493,72 L 495,70 L 501,67 L 503,67 L 504,66 L 509,66 L 510,67 L 516,68 L 520,71 L 523,77 L 523,79 L 524,80 L 525,88" stroke-width="11.59"/>
+        <path d="M 493,392 L 491,394 L 479,394 L 478,393 L 474,393 L 473,392 L 471,392 L 463,388 L 461,386 L 458,385 L 451,379 L 450,379 L 429,358 L 429,357 L 425,353 L 425,352 L 422,349 L 422,348 L 414,337 L 406,321 L 404,319 L 380,271 L 376,267" stroke-width="14.0"/>
+        <path d="M 499,392 L 494,392" stroke-width="19.38"/>
+        <path d="M 499,392 L 504,387 L 510,385 L 534,361 L 534,360 L 539,355 L 539,354 L 546,346 L 546,345 L 550,340 L 552,335 L 555,332 L 558,325 L 560,323 L 561,318 L 563,316 L 565,312 L 565,310 L 567,307 L 568,301 L 570,298 L 570,296 L 572,292 L 572,287 L 573,286 L 573,282 L 574,281 L 574,266 L 573,265 L 573,261 L 569,254 L 564,250 L 562,250 L 561,249 L 557,249 L 556,248 L 550,248 L 549,249 L 544,249 L 543,250 L 541,250 L 538,252 L 534,253 L 532,255 L 528,257 L 525,260 L 524,260 L 511,273 L 511,274 L 503,284 L 497,296 L 497,298 L 494,303 L 494,305 L 493,306 L 493,308 L 491,312 L 491,316 L 490,317 L 490,321 L 489,322 L 489,327 L 488,328 L 488,333 L 487,334 L 487,362 L 488,363 L 489,373 L 490,374 L 490,377 L 491,378 L 491,381 L 492,382 L 492,388 L 493,389 L 493,391" stroke-width="14.39"/>
+        <path d="M 528,448 L 526,445 L 526,442 L 524,440 L 522,435 L 520,433 L 516,425 L 512,420 L 508,412 L 504,407 L 501,401 L 501,397 L 500,396 L 500,393 L 499,392" stroke-width="15.18"/>
+        <path d="M 530,449 L 536,443 L 541,442 L 549,436 L 552,435 L 554,433 L 557,432 L 564,427 L 569,425 L 571,423 L 587,415 L 589,415 L 592,413 L 594,413 L 599,409" stroke-width="4.39"/>
+        <path d="M 530,449 L 532,451 L 532,457 L 533,458 L 533,461 L 534,462 L 534,465 L 535,466 L 535,469 L 536,470 L 536,491 L 535,492 L 535,498 L 534,499 L 534,502 L 531,507 L 530,512 L 525,522 L 520,528 L 518,532 L 505,544 L 504,544 L 496,550 L 490,553 L 488,553 L 484,555 L 481,555 L 480,556 L 475,556 L 474,557 L 465,557 L 464,556 L 459,556 L 458,555 L 454,554 L 448,548 L 446,544 L 446,541 L 445,540 L 445,529 L 446,528 L 446,524 L 448,520 L 450,518 L 450,516 L 453,513 L 453,512 L 459,505 L 459,504 L 482,482 L 483,482 L 487,478 L 488,478 L 492,474 L 496,472 L 503,466 L 504,466 L 506,464 L 513,460 L 516,457 L 520,455 L 522,455 L 528,449" stroke-width="8.0"/>
+      </svg>
+    </a>
+
+    <nav class="main-nav">
+      <a href="#bijoux">Bijoux</a>
+      <a href="#rendezvous">Rendez-vous</a>
+      <a href="#confiance">Confiance</a>
+      <a href="#contact">Contact</a>
+    </nav>
+
+    <div class="header-actions">
+      <a class="pill-btn solid" id="waHeaderBtn" href="#" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12c0 1.85.5 3.58 1.36 5.07L2 22l5.1-1.33A9.94 9.94 0 0 0 12 22c5.52 0 10-4.48 10-10S17.52 2 12 2zm0 18c-1.6 0-3.09-.46-4.35-1.26l-.31-.19-3.03.79.81-2.95-.2-.3A7.94 7.94 0 0 1 4 12c0-4.41 3.59-8 8-8s8 3.59 8 8-3.59 8-8 8zm4.4-5.6c-.24-.12-1.42-.7-1.64-.78-.22-.08-.38-.12-.54.12-.16.24-.62.78-.76.94-.14.16-.28.18-.52.06-.24-.12-1.02-.38-1.94-1.2-.72-.64-1.2-1.44-1.34-1.68-.14-.24-.02-.36.1-.48.11-.11.24-.28.36-.42.12-.14.16-.24.24-.4.08-.16.04-.3-.02-.42-.06-.12-.54-1.3-.74-1.78-.2-.46-.4-.4-.54-.4h-.46c-.16 0-.42.06-.64.3-.22.24-.84.82-.84 2s.86 2.32.98 2.48c.12.16 1.7 2.6 4.12 3.64.58.25 1.03.4 1.38.51.58.18 1.11.16 1.53.1.47-.07 1.42-.58 1.62-1.14.2-.56.2-1.04.14-1.14-.06-.1-.22-.16-.46-.28z"/></svg>
+        <span class="pill-text">WhatsApp</span>
+      </a>
+      <button type="button" class="burger" id="burgerBtn" aria-label="Ouvrir le menu" aria-controls="mobileNav" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+
+  <div class="mobile-overlay" id="mobileOverlay"></div>
+  <nav class="mobile-nav" id="mobileNav">
+    <button type="button" class="mobile-close" id="mobileClose"><span>Fermer</span><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+    <a href="#bijoux">Bijoux</a>
+    <a href="#rendezvous">Rendez-vous</a>
+    <a href="#confiance">Confiance</a>
+    <a href="#contact">Contact</a>
+  </nav>
+
+  <!-- ============ HERO ============ -->
+  <section class="hero" id="accueil" aria-labelledby="heroTitle">
+    <div class="hero-inner">
+    <div class="hero-copy">
+      <svg class="hero-logo" viewBox="140 315 1000 610" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Klinic Studio — Lash and Piercing">
+        <g transform="translate(130,280)" fill="none" stroke="var(--rose-gold)" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M 181,124 L 185,122 L 193,120 L 194,119 L 197,119 L 198,118 L 204,118 L 205,117 L 212,117 L 213,116 L 263,116 L 264,117 L 283,117 L 284,118 L 319,118 L 320,117 L 331,117 L 332,116 L 344,115 L 345,114 L 349,114 L 350,113 L 353,113 L 354,112 L 360,112 L 364,116" stroke-width="4.0"/>
+        <path d="M 232,358 L 232,364 L 233,365 L 233,368 L 234,369 L 234,371 L 235,372 L 235,374 L 237,378 L 239,380 L 241,384 L 250,393 L 251,393 L 256,397 L 258,397 L 262,399 L 265,399 L 266,400 L 287,400 L 288,399 L 296,397 L 304,393 L 306,391 L 309,390 L 311,388 L 315,386 L 328,373 L 328,372 L 334,365 L 335,362 L 338,359 L 339,356 L 341,354 L 342,350 L 349,337 L 349,335 L 352,330 L 352,328 L 354,324 L 355,317 L 356,316 L 357,310 L 358,309 L 359,303 L 360,302 L 360,298 L 361,297 L 361,291 L 362,290 L 362,286 L 363,285 L 364,270 L 366,267" stroke-width="6.39"/>
+        <path d="M 364,116 L 364,175 L 365,176 L 365,207 L 366,208 L 365,265 L 366,266" stroke-width="16.0"/>
+        <path d="M 367,102 L 366,103 L 365,115 L 364,116" stroke-width="15.98"/>
+        <path d="M 367,267 L 375,267" stroke-width="18.0"/>
+        <path d="M 367,101 L 367,98 L 368,97 L 368,89 L 370,85 L 371,78 L 374,74 L 377,68 L 380,65 L 382,64 L 385,64 L 386,63 L 388,64 L 393,64 L 395,65 L 399,69 L 399,71 L 400,72 L 400,77 L 399,78 L 399,81 L 396,87 L 385,98 L 383,98 L 380,101 L 377,101 L 376,102 L 368,102" stroke-width="7.6"/>
+        <path d="M 376,266 L 393,250 L 393,249 L 401,240 L 405,233 L 408,230 L 413,220 L 416,217 L 418,212 L 420,210 L 423,204 L 424,200 L 426,198 L 429,192 L 429,190 L 434,181 L 434,179 L 438,172 L 438,170 L 446,154 L 446,152 L 448,149 L 448,147 L 458,127 L 458,125 L 460,123 L 460,121 L 463,115 L 465,113 L 465,111 L 469,103 L 471,101 L 473,96 L 475,94 L 478,88 L 484,81 L 484,80 L 492,72 L 493,72 L 495,70 L 501,67 L 503,67 L 504,66 L 509,66 L 510,67 L 516,68 L 520,71 L 523,77 L 523,79 L 524,80 L 525,88" stroke-width="11.59"/>
+        <path d="M 493,392 L 491,394 L 479,394 L 478,393 L 474,393 L 473,392 L 471,392 L 463,388 L 461,386 L 458,385 L 451,379 L 450,379 L 429,358 L 429,357 L 425,353 L 425,352 L 422,349 L 422,348 L 414,337 L 406,321 L 404,319 L 380,271 L 376,267" stroke-width="14.0"/>
+        <path d="M 499,392 L 494,392" stroke-width="19.38"/>
+        <path d="M 499,392 L 504,387 L 510,385 L 534,361 L 534,360 L 539,355 L 539,354 L 546,346 L 546,345 L 550,340 L 552,335 L 555,332 L 558,325 L 560,323 L 561,318 L 563,316 L 565,312 L 565,310 L 567,307 L 568,301 L 570,298 L 570,296 L 572,292 L 572,287 L 573,286 L 573,282 L 574,281 L 574,266 L 573,265 L 573,261 L 569,254 L 564,250 L 562,250 L 561,249 L 557,249 L 556,248 L 550,248 L 549,249 L 544,249 L 543,250 L 541,250 L 538,252 L 534,253 L 532,255 L 528,257 L 525,260 L 524,260 L 511,273 L 511,274 L 503,284 L 497,296 L 497,298 L 494,303 L 494,305 L 493,306 L 493,308 L 491,312 L 491,316 L 490,317 L 490,321 L 489,322 L 489,327 L 488,328 L 488,333 L 487,334 L 487,362 L 488,363 L 489,373 L 490,374 L 490,377 L 491,378 L 491,381 L 492,382 L 492,388 L 493,389 L 493,391" stroke-width="14.39"/>
+        <path d="M 528,448 L 526,445 L 526,442 L 524,440 L 522,435 L 520,433 L 516,425 L 512,420 L 508,412 L 504,407 L 501,401 L 501,397 L 500,396 L 500,393 L 499,392" stroke-width="15.18"/>
+        <path d="M 530,449 L 536,443 L 541,442 L 549,436 L 552,435 L 554,433 L 557,432 L 564,427 L 569,425 L 571,423 L 587,415 L 589,415 L 592,413 L 594,413 L 599,409" stroke-width="4.39"/>
+        <path d="M 530,449 L 532,451 L 532,457 L 533,458 L 533,461 L 534,462 L 534,465 L 535,466 L 535,469 L 536,470 L 536,491 L 535,492 L 535,498 L 534,499 L 534,502 L 531,507 L 530,512 L 525,522 L 520,528 L 518,532 L 505,544 L 504,544 L 496,550 L 490,553 L 488,553 L 484,555 L 481,555 L 480,556 L 475,556 L 474,557 L 465,557 L 464,556 L 459,556 L 458,555 L 454,554 L 448,548 L 446,544 L 446,541 L 445,540 L 445,529 L 446,528 L 446,524 L 448,520 L 450,518 L 450,516 L 453,513 L 453,512 L 459,505 L 459,504 L 482,482 L 483,482 L 487,478 L 488,478 L 492,474 L 496,472 L 503,466 L 504,466 L 506,464 L 513,460 L 516,457 L 520,455 L 522,455 L 528,449" stroke-width="8.0"/>
+        </g>
+        <g transform="translate(730,440)">
+          <g transform="translate(0.000000,260.000000) scale(0.100000,-0.100000)" fill="#B01760" stroke="none">
+            <path d="M2800 1598 c0 -5 -17 -9 -37 -8 -21 1 -40 1 -43 0 -3 -1 -30 -4 -60
+-6 -69 -5 -188 -27 -356 -64 -73 -17 -148 -30 -167 -30 -45 0 -52 -11 -31 -52
+52 -103 147 -134 269 -88 79 30 206 68 248 75 36 6 38 7 23 24 -22 24 -20 54
+5 77 20 18 21 18 40 -6 14 -18 18 -34 14 -57 -3 -17 -1 -34 5 -38 5 -3 10 -1
+10 4 0 7 24 11 60 11 33 0 60 -4 60 -9 0 -12 33 -9 42 4 5 7 14 6 28 -3 14 -8
+20 -9 20 -1 0 22 249 -27 359 -71 30 -11 56 -19 59 -16 34 35 -249 194 -400
+224 -45 9 -85 20 -88 23 -9 11 -60 17 -60 7z M1036 1580 c-117 -21 -331 -121
+-410 -191 -54 -48 -42 -57 36 -26 130 52 256 72 448 72 197 -1 259 -11 416
+-70 161 -61 254 -43 305 57 29 58 26 68 -24 68 -23 0 -96 13 -162 29 -244 60
+-485 84 -609 61z M2031 1462 c-1 -22 25 -76 45 -92 17 -14 16 -12 -2 20 -11
+19 -25 46 -32 60 -6 14 -11 19 -11 12z M3035 1080 c-3 -5 -17 -10 -29 -10 -15
+0 -26 -7 -29 -20 -3 -11 -12 -20 -21 -20 -9 0 -16 -4 -16 -10 0 -14 -39 -37
+-127 -76 -43 -18 -68 -34 -56 -34 25 0 131 37 151 53 10 8 16 7 23 -4 5 -8 9
+-9 9 -4 0 6 16 19 35 29 19 11 35 24 35 29 0 5 11 20 25 33 25 23 33 44 16 44
+-6 0 -13 -4 -16 -10z M788 1073 c-23 -6 -23 -17 4 -69 12 -24 18 -47 14 -51
+-4 -4 -37 -7 -74 -7 -65 0 -158 34 -177 64 -10 17 -35 11 -35 -8 0 -33 115
+-122 157 -122 7 0 13 -4 13 -10 0 -14 -46 -12 -108 3 -53 14 -62 13 -62 -9 0
+-15 89 -64 115 -64 29 0 15 -19 -17 -22 -81 -8 -16 -48 78 -48 54 0 72 -13 33
+-23 -45 -12 -13 -32 49 -32 67 0 73 -3 42 -23 -49 -30 22 -44 87 -17 45 19 44
+20 37 -15 -7 -34 5 -38 46 -15 32 18 40 18 40 0 0 -19 24 -19 40 0 16 19 40
+19 40 1 0 -27 21 -28 47 -5 18 17 27 20 30 12 6 -17 28 -16 42 1 7 8 39 17 71
+21 33 4 63 11 66 16 3 6 14 7 23 4 11 -3 25 3 36 15 10 11 23 20 30 20 45 0
+97 50 111 104 4 19 17 32 35 40 16 6 29 16 29 23 0 17 -9 16 -81 -2 -88 -23
+-231 -34 -318 -24 -89 10 -211 46 -218 66 -3 7 -9 13 -14 13 -19 0 -89 53 -89
+67 0 8 -13 20 -30 26 -16 6 -30 14 -30 18 0 16 -47 55 -62 52z M3116 1045
+c-11 -14 -25 -24 -33 -21 -7 3 -13 -1 -13 -9 0 -7 -9 -17 -20 -20 -11 -3 -20
+-12 -20 -20 0 -8 -9 -16 -19 -20 -11 -3 -34 -20 -52 -36 -18 -16 -38 -28 -45
+-25 -7 3 -15 -1 -17 -9 -8 -18 -88 -43 -180 -55 -88 -11 -245 1 -324 25 -26 8
+-56 15 -65 15 -27 0 -22 -19 8 -32 17 -8 34 -31 49 -64 21 -48 63 -84 98 -84
+6 0 18 -7 28 -16 9 -8 28 -17 41 -20 71 -12 146 -31 165 -42 12 -6 28 -9 37
+-6 8 3 25 -1 38 -10 31 -22 38 -20 38 9 0 31 3 31 41 3 29 -22 31 -22 43 -6
+12 17 16 17 44 2 38 -19 54 -11 46 22 -7 28 -7 28 39 9 46 -19 97 -20 97 -1 0
+8 -7 16 -15 20 -32 12 -12 21 47 21 71 0 87 17 34 35 -55 18 -43 26 32 22 71
+-4 126 10 120 31 -3 6 -19 13 -36 15 -44 4 -40 15 11 30 24 7 56 24 72 37 26
+21 28 24 12 30 -9 4 -37 2 -62 -4 -53 -13 -105 -14 -105 -2 0 5 13 12 29 16
+67 15 167 103 143 127 -8 8 -26 1 -60 -21 -54 -34 -138 -55 -189 -45 -44 8
+-50 20 -24 55 11 15 21 37 21 49 0 28 -31 26 -54 -5z M900 1040 c0 -11 34 -37
+58 -44 12 -4 22 -11 22 -15 0 -3 8 -7 18 -8 9 -1 55 -15 102 -32 63 -23 102
+-30 150 -30 l65 0 -87 19 c-138 29 -268 77 -268 99 0 5 -13 11 -30 13 -16 3
+-30 2 -30 -2z M3717 503 c-157 -189 -327 -312 -527 -381 -139 -48 -206 -57
+-410 -56 -203 1 -286 13 -745 108 -407 84 -654 115 -975 123 -410 10 -636 -26
+-967 -155 -80 -31 -93 -40 -93 -59 0 -29 7 -28 100 1 195 62 514 104 705 92
+376 -24 873 -89 1202 -156 87 -18 138 -20 599 -20 l503 0 76 30 c171 68 302
+151 428 269 114 109 187 205 187 249 0 17 -4 32 -9 32 -5 0 -38 -35 -74 -77z"/>
+          </g>
+        
+          <g transform="translate(0.000000,260.000000) scale(0.100000,-0.100000)" fill="#F5EFEC" stroke="none">
+<path d="M2827 1713 c-16 -15 -7 -62 13 -68 11 -3 20 -11 20 -16 0 -20 16 -7
+27 22 15 39 2 69 -31 69 -12 0 -26 -3 -29 -7z M2672 1575 c-47 -46 -52 -48
+-90 -45 -12 1 -25 -6 -28 -15 -9 -23 -2 -26 34 -16 29 9 32 8 32 -12 0 -30 11
+-44 43 -56 39 -15 50 -14 43 4 -3 8 -1 15 4 15 14 0 13 67 -1 93 -10 18 -8 24
+15 43 30 26 32 34 10 34 -8 0 -36 -20 -62 -45z m8 -105 c-20 -12 -33 -1 -19
+16 9 11 15 12 23 4 8 -8 7 -13 -4 -20z M2900 1390 c-14 -35 -1 -60 32 -60 15
+0 18 5 13 21 -5 14 -2 25 6 30 11 8 10 12 -5 24 -27 21 -32 19 -46 -15z M970
+1207 c-36 -14 -76 -42 -114 -79 -33 -31 -65 -59 -73 -62 -7 -3 -13 -10 -13
+-17 0 -6 7 -8 15 -5 10 4 32 -11 63 -43 44 -45 127 -111 141 -111 4 0 6 51 6
+113 0 104 2 117 28 166 15 29 27 55 27 57 0 8 -27 2 -80 -19z M2905 1183 c4
+-10 17 -49 29 -86 17 -56 18 -71 8 -88 -7 -11 -10 -24 -7 -29 3 -5 -2 -27 -11
+-50 -9 -22 -14 -43 -12 -46 11 -11 112 51 167 102 39 36 64 52 75 48 12 -4 16
+0 16 16 0 13 -5 20 -12 17 -7 -2 -33 13 -57 34 -48 43 -153 99 -184 99 -14 0
+-17 -4 -12 -17z"/>
+</g>
+</g>
+        <g transform="translate(130,680)">
+          <g transform="translate(0.000000,220.000000) scale(0.100000,-0.100000)" fill="#FFFFFF" stroke="none">
+            <path d="M3810 1734 c-246 -41 -374 -143 -434 -343 -20 -69 -21 -199 -1 -276
+47 -180 200 -336 366 -374 63 -15 195 -13 255 3 119 32 217 112 248 204 17 49
+16 49 -28 -12 -40 -53 -135 -97 -227 -104 -55 -4 -84 0 -152 22 -217 67 -347
+255 -347 500 0 188 91 309 255 337 58 10 82 9 141 -4 93 -20 188 -67 242 -120
+l42 -41 0 91 0 90 -72 11 c-85 13 -252 22 -288 16z M5880 1727 c-131 -30 -210
+-99 -218 -190 -8 -105 55 -176 315 -349 89 -60 177 -126 196 -148 56 -65 58
+-127 5 -177 -29 -27 -32 -28 -141 -28 -102 1 -117 3 -171 29 -75 37 -121 77
+-157 140 l-29 51 0 -88 0 -87 33 -20 c103 -64 303 -83 427 -42 114 38 172 104
+172 192 0 94 -65 167 -264 297 -166 108 -254 177 -273 214 -25 48 -19 106 13
+139 42 42 100 54 191 41 129 -20 223 -76 282 -171 l29 -45 0 87 0 87 -52 24
+c-29 14 -71 30 -93 36 -64 18 -204 22 -265 8z M9315 1726 c-124 -30 -245 -127
+-301 -241 -55 -113 -42 -289 32 -437 120 -238 359 -319 599 -203 215 103 293
+321 205 572 -42 119 -129 227 -222 274 -90 46 -212 60 -313 35z m159 -55 c110
+-48 221 -210 261 -378 24 -100 17 -250 -14 -314 -29 -62 -83 -114 -137 -135
+-132 -50 -304 58 -398 250 -58 117 -76 191 -76 307 1 140 44 224 142 274 45
+22 62 26 114 22 33 -2 82 -14 108 -26z M6327 1724 c-4 -4 -7 -28 -7 -53 l0
+-45 28 26 c39 38 73 48 163 48 l79 0 0 -445 0 -445 75 0 75 0 0 445 0 445 83
+0 c88 -1 117 -10 166 -52 l31 -27 0 -294 c0 -328 4 -353 66 -425 90 -105 303
+-139 457 -73 64 28 131 92 156 151 21 48 21 62 19 397 l-3 348 -44 3 c-23 2
+-41 0 -39 -5 58 -116 70 -205 66 -482 -3 -212 -5 -229 -26 -268 -29 -56 -56
+-80 -121 -111 -104 -48 -245 -26 -319 51 -60 62 -61 72 -63 447 0 189 -3 349
+-6 356 -4 10 -90 13 -417 14 -227 0 -415 -3 -419 -6z M7877 1723 c-4 -3 -7
+-210 -7 -460 l0 -453 244 0 c156 0 255 4 277 11 143 49 239 222 241 435 2 256
+-105 430 -287 463 -63 12 -457 15 -468 4z m386 -39 c145 -49 239 -243 224
+-463 -10 -148 -66 -271 -155 -338 -56 -43 -98 -53 -214 -53 l-98 0 0 435 0
+435 98 0 c63 0 115 -6 145 -16z M8748 1578 c0 -84 -2 -291 -2 -460 l-1 -308
+73 0 72 0 -2 458 -3 457 -67 3 -68 3 -2 -153z M340 1230 l0 -490 75 0 75 0 0
+251 c0 156 4 249 10 247 5 -1 85 -91 177 -198 92 -108 188 -219 213 -248 l45
+-52 103 0 103 0 -243 281 c-254 294 -283 328 -277 333 2 1 76 58 164 127 209
+163 223 172 291 208 l59 30 -73 1 c-68 0 -73 -1 -67 -19 4 -13 -1 -27 -12 -38
+-36 -35 -465 -368 -479 -371 -12 -3 -14 31 -14 212 l0 216 -75 0 -75 0 0 -490z
+M1180 1230 l0 -490 325 0 325 0 0 62 0 62 -27 -26 c-62 -58 -83 -63 -285 -66
+l-188 -4 0 476 0 476 -75 0 -75 0 0 -490z M1880 1230 l0 -491 78 3 77 3 0 485
+0 485 -77 3 -78 3 0 -491z M2200 1230 l0 -490 57 0 c48 0 54 2 40 13 -25 18
+-44 73 -56 160 -15 104 -15 710 -1 705 11 -3 131 -155 493 -620 106 -136 195
+-247 200 -248 4 0 7 218 7 485 l0 485 -51 0 c-48 0 -49 -1 -33 -17 44 -44 49
+-77 52 -342 2 -157 0 -252 -6 -250 -5 2 -31 31 -58 64 -27 34 -138 170 -248
+303 l-198 242 -99 0 -99 0 0 -490z M3110 1230 l0 -490 75 0 75 0 0 490 0 490
+-75 0 -75 0 0 -490z M2378 333 c-16 -4 -18 -20 -18 -154 l0 -149 81 0 c71 0
+80 2 77 17 -2 14 -15 19 -56 21 l-52 3 0 129 c0 71 -3 131 -7 133 -5 2 -16 2
+-25 0z M3064 326 c-20 -9 -35 -26 -42 -45 -20 -56 12 -100 83 -117 40 -9 75
+-31 75 -49 0 -42 -79 -62 -102 -25 -8 12 -24 20 -40 20 -24 0 -26 -3 -19 -22
+24 -65 129 -82 182 -29 55 56 30 111 -67 145 -54 19 -59 24 -59 51 0 27 3 30
+37 33 29 2 40 -2 50 -17 16 -27 58 -28 58 -3 0 51 -95 86 -156 58z M3383 333
+c-10 -4 -13 -43 -13 -154 l0 -149 25 0 c24 0 25 2 25 65 l0 65 70 0 70 0 0
+-65 c0 -63 1 -65 25 -65 l25 0 0 150 0 150 -25 0 c-24 0 -25 -2 -25 -65 l0
+-65 -70 0 -70 0 0 64 c0 63 -8 79 -37 69z M6635 326 c-65 -29 -95 -76 -95
+-149 0 -51 28 -100 72 -127 40 -24 116 -26 158 -5 27 14 60 51 60 67 0 17 -44
+7 -72 -17 -69 -58 -168 -7 -168 86 0 37 24 85 49 99 34 17 96 12 116 -10 18
+-19 75 -28 75 -12 0 14 -54 60 -83 71 -37 14 -75 13 -112 -3z M7666 330 c-67
+-20 -111 -89 -104 -162 9 -84 69 -140 153 -140 61 0 105 28 133 82 37 74 31
+83 -63 83 -67 1 -80 -2 -83 -16 -3 -14 5 -17 52 -17 64 0 71 -12 32 -57 -20
+-23 -32 -28 -71 -28 -40 0 -51 5 -76 33 -63 70 -19 181 72 182 21 0 47 -8 62
+-20 25 -20 77 -28 77 -12 0 16 -43 54 -76 68 -37 16 -65 16 -108 4z M2688 196
+c-26 -73 -50 -141 -54 -150 -5 -12 0 -16 19 -16 18 0 28 8 37 30 12 29 15 30
+77 30 62 0 64 -1 74 -30 8 -22 17 -30 35 -30 13 0 24 3 24 7 0 3 -23 71 -52
+150 -51 142 -52 143 -83 143 -30 0 -31 -1 -77 -134z m105 1 c9 -30 17 -57 17
+-60 0 -4 -20 -7 -45 -7 -50 0 -51 2 -31 51 7 19 16 42 19 52 11 30 23 19 40
+-36z M4049 303 c-6 -16 -30 -83 -54 -151 l-44 -122 29 0 c23 0 30 5 35 30 6
+30 8 30 71 30 63 0 65 -1 75 -30 8 -22 17 -30 35 -30 13 0 24 4 24 9 0 7 -74
+221 -95 274 -5 11 -18 17 -36 17 -23 0 -32 -6 -40 -27z m65 -100 c24 -69 22
+-73 -29 -73 -25 0 -45 2 -45 4 0 3 20 62 35 104 9 24 23 11 39 -35z M4350 180
+l0 -150 25 0 25 0 0 105 c0 58 3 105 8 104 4 0 37 -47 74 -105 56 -87 72 -104
+93 -104 l25 0 0 150 0 150 -25 0 -25 0 0 -100 c0 -55 -3 -100 -7 -100 -5 0
+-37 45 -73 100 -56 86 -69 100 -92 100 l-28 0 0 -150z M4750 180 l0 -150 75 0
+c128 0 187 48 187 151 0 102 -59 149 -184 149 l-78 0 0 -150z m181 81 c24 -25
+29 -38 29 -80 0 -73 -28 -103 -103 -109 l-57 -4 0 111 0 111 51 0 c43 0 55 -5
+80 -29z M5360 180 l0 -150 25 0 c24 0 25 3 25 60 l0 60 35 0 c107 0 161 85 96
+151 -27 27 -35 29 -105 29 l-76 0 0 -150z m150 91 c14 -28 13 -38 -10 -61 -12
+-12 -33 -20 -55 -20 l-35 0 0 50 0 50 45 0 c34 0 47 -5 55 -19z M5690 180 l0
+-150 25 0 25 0 0 150 0 150 -25 0 -25 0 0 -150z M5890 180 l0 -150 85 0 c78 0
+85 2 85 20 0 18 -7 20 -60 20 l-60 0 0 45 0 45 55 0 c48 0 55 3 55 19 0 17 -8
+20 -52 23 l-53 3 -3 43 -3 42 60 0 c54 0 61 2 61 20 0 18 -7 20 -85 20 l-85 0
+0 -150z M6200 180 l0 -150 25 0 c24 0 25 3 25 61 0 57 1 60 22 57 15 -2 32
+-21 53 -58 26 -47 35 -55 63 -58 l32 -3 -36 62 c-29 49 -34 63 -23 70 8 5 18
+9 22 9 15 0 35 65 30 93 -10 49 -45 67 -134 67 l-79 0 0 -150z m154 88 c20
+-29 20 -34 -4 -58 -13 -13 -33 -20 -60 -20 l-40 0 0 50 0 50 44 0 c35 0 48 -5
+60 -22z M6970 180 l0 -150 25 0 25 0 0 150 0 150 -25 0 -25 0 0 -150z M7170
+180 l0 -150 25 0 25 0 0 105 c0 58 3 105 8 105 4 0 38 -48 76 -105 55 -84 73
+-105 92 -105 l24 0 0 150 0 150 -26 0 -25 0 2 -95 c2 -81 -3 -120 -14 -104 -1
+2 -32 48 -67 102 -56 84 -68 97 -92 97 l-28 0 0 -150z"/>
+          </g>
+        </g>
+      </svg>
+      <h1 class="hero-title" id="heroTitle">Chaque piercing raconte quelque chose.</h1>
+      <p class="hero-sub" id="heroSub">Découvrez notre collection de bijoux de piercing et prenez rendez-vous pour votre prochain piercing.</p>
+      <div class="hero-ctas">
+        <a href="#bijoux" class="btn btn-primary">Voir les bijoux</a>
+        <a href="#rendezvous" class="btn btn-ghost" id="heroSecondaryCta">Prendre rendez-vous</a>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="hero-frame" id="heroFrame">
+        <video id="heroVideo" muted playsinline preload="none" poster="assets/hero-poster.jpg" aria-hidden="true" tabindex="-1" disablepictureinpicture></video>
+        <img class="hero-poster" id="heroPoster" src="assets/hero-poster.jpg" alt="" hidden>
+        <button type="button" class="hero-replay" id="heroReplay" hidden><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 12a8 8 0 1 0 2.4-5.7M4 4v4.4h4.4"/></svg><span id="heroReplayLabel">Revoir</span></button>
+      </div>
+    </div>
+    </div>
+  </section>
+
+  <!-- ============ SERVICES PAR ZONE ============ -->
+  <section id="services" aria-labelledby="servicesTitle">
+    <div class="section-inner">
+      <div class="reveal">
+        <p class="eyebrow">Nos zones</p>
+        <h2 class="section-title" id="servicesTitle">Choisissez votre zone</h2>
+      </div>
+      <div class="service-grid">
+        <article class="service-card reveal">
+          <div class="service-photo"><img src="assets/services-oreille.jpg" alt="" loading="lazy" width="800" height="600"></div>
+          <div class="service-body">
+            <h3 class="service-title">Oreilles</h3>
+            <p class="service-text">Hélix, tragus, conch, lobe… retrouvez les bijoux pour chaque emplacement de l'oreille.</p>
+            <p class="service-price" data-service-price="oreille" hidden></p>
+            <button type="button" class="btn btn-ghost service-btn" data-service-filter="oreille" aria-label="Voir les bijoux pour les oreilles"><span>Voir les bijoux</span><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+          </div>
+        </article>
+        <article class="service-card reveal">
+          <div class="service-photo"><img src="assets/services-nez.jpg" alt="" loading="lazy" width="800" height="600"></div>
+          <div class="service-body">
+            <h3 class="service-title">Nez</h3>
+            <p class="service-text">Septum, narine : des bijoux discrets ou plus affirmés.</p>
+            <p class="service-price" data-service-price="nez" hidden></p>
+            <button type="button" class="btn btn-ghost service-btn" data-service-filter="nez" aria-label="Voir les bijoux pour le nez"><span>Voir les bijoux</span><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+          </div>
+        </article>
+        <article class="service-card reveal">
+          <div class="service-photo"><img src="assets/services-nombril.jpg" alt="" loading="lazy" width="800" height="600"></div>
+          <div class="service-body">
+            <h3 class="service-title">Nombril</h3>
+            <p class="service-text">Des bijoux pensés pour le nombril.</p>
+            <p class="service-price" data-service-price="nombril" hidden></p>
+            <button type="button" class="btn btn-ghost service-btn" data-service-filter="nombril" aria-label="Voir les bijoux pour le nombril"><span>Voir les bijoux</span><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+          </div>
+        </article>
+        <article class="service-card reveal">
+          <div class="service-photo"><img src="assets/services-bouche-corps.jpg" alt="" loading="lazy" width="800" height="600"></div>
+          <div class="service-body">
+            <h3 class="service-title">Bouche et corps</h3>
+            <p class="service-text">Langue, smiley, micro dermal… les bijoux pour la bouche et d'autres zones du corps.</p>
+            <p class="service-price" data-service-price="bouche-corps" hidden></p>
+            <button type="button" class="btn btn-ghost service-btn" data-service-filter="bouche-corps" aria-label="Voir les bijoux pour la bouche et le corps"><span>Voir les bijoux</span><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ COUPS DE CŒUR ============ -->
+  <section id="coups-de-coeur" class="section-flush" hidden>
+    <div class="section-inner">
+      <p class="eyebrow">Sélection</p>
+      <h2 class="section-title section-title--sm">Nos coups de cœur du moment</h2>
+      <div class="featured-strip" id="featuredStrip"></div>
+    </div>
+  </section>
+
+  <!-- ============ CATALOGUE ============ -->
+  <section id="bijoux">
+    <div class="section-inner">
+      <div class="catalog-head reveal">
+        <div>
+          <p class="eyebrow">Bijoux de piercing</p>
+          <h2 class="section-title">Des bijoux pour chaque zone, du discret à l'affirmé</h2>
+          <p class="section-lede">Choisissez un bijou et finalisez votre commande directement sur WhatsApp — sans paiement en ligne, en toute simplicité.</p>
+        </div>
+      </div>
+
+      <div class="filters reveal">
+        <select id="filterType" aria-label="Type de bijou">
+          <option value="">Tous les types</option>
+        </select>
+        <select id="filterZone" aria-label="Zone">
+          <option value="">Toutes les zones</option>
+        </select>
+        <select id="filterCategory" aria-label="Catégorie ou emplacement">
+          <option value="">Toutes les catégories</option>
+        </select>
+        <select id="filterMaterial" aria-label="Matériau">
+          <option value="">Tous les matériaux</option>
+          <option value="Acier inoxydable">Acier inoxydable</option>
+          <option value="Titane">Titane</option>
+          <option value="Or">Or</option>
+          <option value="Argent">Argent</option>
+        </select>
+        <select id="filterBudget" aria-label="Budget">
+          <option value="">Tous les budgets</option>
+          <option value="5000">Jusqu'à 5 000 FCFA</option>
+          <option value="15000">Jusqu'à 15 000 FCFA</option>
+          <option value="30000">Jusqu'à 30 000 FCFA</option>
+        </select>
+        <div class="filter-chip" id="filterChip" hidden>
+          <span id="filterChipLabel"></span>
+          <button type="button" id="filterChipClear" aria-label="Retirer le filtre de zone"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+        </div>
+      </div>
+
+      <div class="catalog-grid" id="catalogGrid">
+        <div class="catalog-empty">Aucun bijou à afficher pour le moment.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ NOTRE UNIVERS (masquée tant qu'il y a moins de 2 visuels dans assets/) ============ -->
+  <section id="univers" aria-labelledby="universTitle" hidden>
+    <div class="section-inner">
+      <div class="reveal">
+        <p class="eyebrow">Ambiance</p>
+        <h2 class="section-title" id="universTitle">Notre univers</h2>
+      </div>
+      <div class="univers-grid" id="universGrid"></div>
+    </div>
+  </section>
+
+  <!-- ============ TÉMOIGNAGES (masquée sauf si activée dans les réglages ET au moins un témoignage publié) ============ -->
+  <section id="temoignages" aria-labelledby="testiTitle" hidden>
+    <div class="section-inner">
+      <div class="reveal">
+        <p class="eyebrow">Avis</p>
+        <h2 class="section-title" id="testiTitle">Témoignages</h2>
+      </div>
+      <div class="testi-list" id="testiList"></div>
+    </div>
+  </section>
+
+  <!-- ============ ÉQUIPE (masquée sauf si activée dans les réglages ET au moins un membre publié) ============ -->
+  <section id="equipe" aria-labelledby="teamTitle" hidden>
+    <div class="section-inner">
+      <div class="reveal">
+        <p class="eyebrow">L'équipe</p>
+        <h2 class="section-title" id="teamTitle">Notre équipe</h2>
+      </div>
+      <div class="team-list" id="teamList"></div>
+    </div>
+  </section>
+
+  <!-- ============ RENDEZ-VOUS ============ -->
+  <section id="rendezvous">
+    <div class="section-inner rdv-wrap">
+      <div class="reveal">
+        <p class="eyebrow">Prise de rendez-vous</p>
+        <h2 class="section-title" id="rdvTitle">Réservez votre séance de perçage</h2>
+        <p class="rdv-note" id="rdvNote">Choisissez la zone et l’emplacement, indiquez vos disponibilités : nous vous confirmons ensuite le créneau par WhatsApp ou par appel téléphonique.</p>
+        <ul class="rdv-steps" id="rdvSteps">
+          <li>Vous choisissez la zone, l'emplacement et vos disponibilités.</li>
+          <li>Nous vous contactons par WhatsApp ou par téléphone pour confirmer le créneau.</li>
+        </ul>
+      </div>
+
+      <div class="reveal">
+        <div class="rdv-closed" id="rdvClosed" hidden>
+          <p class="rdv-closed-title">Ouverture prochaine</p>
+          <p class="rdv-closed-text">Le studio n'est pas encore ouvert : écrivez-nous sur WhatsApp et nous vous prévenons dès que les rendez-vous sont possibles.</p>
+          <a class="btn btn-primary" id="rdvNotifyBtn" href="#contact" target="_blank" rel="noopener">Être prévenue de l'ouverture</a>
+        </div>
+
+        <form class="rdv-form" id="rdvForm">
+          <div class="field">
+            <label for="rdvName">Nom complet</label>
+            <input type="text" id="rdvName" required placeholder="Votre nom" autocomplete="name">
+          </div>
+          <div class="field">
+            <label for="rdvPhone">Numéro de téléphone</label>
+            <input type="tel" id="rdvPhone" required placeholder="+229 ..." autocomplete="tel">
+          </div>
+          <div class="field">
+            <label for="rdvType">Zone</label>
+            <select id="rdvType" required>
+              <option value="">Sélectionner</option>
+            </select>
+          </div>
+          <div class="field" id="rdvPlaceField" hidden>
+            <label for="rdvPlace">Emplacement</label>
+            <select id="rdvPlace"></select>
+          </div>
+          <div class="field" id="rdvOtherField" hidden>
+            <label for="rdvOther">Précisez (facultatif)</label>
+            <input type="text" id="rdvOther" maxlength="80" placeholder="Ex : l'emplacement souhaité">
+          </div>
+          <div class="field">
+            <label for="rdvDate">Date et heure souhaitées</label>
+            <input type="datetime-local" id="rdvDate" required>
+          </div>
+          <button type="submit" class="rdv-submit" id="rdvSubmitBtn">Envoyer ma demande</button>
+          <p class="rdv-error" id="rdvError" role="alert" hidden></p>
+          <div class="rdv-confirm" id="rdvConfirm" role="status">Merci ! Votre demande a bien été reçue — nous vous recontactons très vite par WhatsApp ou téléphone pour confirmer.</div>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ CONFIANCE ============ -->
+  <section id="confiance" aria-labelledby="trustTitle" hidden>
+    <div class="section-inner">
+      <div class="reveal">
+        <p class="eyebrow">Confiance</p>
+        <h2 class="section-title" id="trustTitle">Notre façon de travailler</h2>
+      </div>
+      <div class="trust-grid" id="trustGrid" hidden></div>
+      <div class="steps" id="stepsBlock" hidden>
+        <h3 class="steps-title">Le déroulé d'un perçage</h3>
+        <div class="steps-track">
+          <span class="steps-line" aria-hidden="true"></span>
+          <ol class="steps-list" id="stepsList"></ol>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ CONTACT ============ -->
+  <section id="contact">
+    <div class="section-inner">
+      <div class="contact-box reveal">
+        <div>
+          <p class="eyebrow">Contact</p>
+          <h2 class="section-title section-title--sm">Une question ? Écrivez-nous directement.</h2>
+          <div class="contact-lines">
+            <a id="contactPhone" href="#" class="link-inherit"></a>
+          </div>
+        </div>
+        <a href="#" id="waContactBtn" target="_blank" rel="noopener" class="btn btn-primary">Écrire sur WhatsApp</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ BARRE D'ACTIONS MOBILE ============ -->
+  <nav class="mobile-cta" id="mobileCta" aria-label="Actions rapides">
+    <a class="mobile-cta-btn" href="#bijoux">
+      <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 3h12l3 6-9 12L3 9z"/><path d="M3 9h18M9 3l3 18M15 3l-3 18"/></svg>
+      <span>Bijoux</span>
+    </a>
+    <a class="mobile-cta-btn is-primary" id="mobileCtaMain" href="#rendezvous">
+      <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 5h16v11H10l-5 4v-4H4z"/></svg>
+      <span id="mobileCtaMainLabel">Réserver</span>
+    </a>
+  </nav>
+
+  <!-- ============ GALERIE PRODUIT (fenêtre de détail) ============ -->
+  <div class="gallery-overlay" id="galleryOverlay">
+    <div class="gallery-modal" id="galleryDialog" role="dialog" aria-modal="true" aria-labelledby="galleryName" tabindex="-1">
+      <button type="button" class="gallery-close" id="galleryClose" aria-label="Fermer"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+      <div class="gallery-track-wrap" id="galleryTrackWrap">
+        <div class="gallery-track" id="galleryTrack"></div>
+        <button type="button" class="gallery-arrow prev" id="galleryPrev" aria-label="Photo précédente" hidden>‹</button>
+        <button type="button" class="gallery-arrow next" id="galleryNext" aria-label="Photo suivante" hidden>›</button>
+        <div class="gallery-counter" id="galleryCounter" aria-live="polite" hidden></div>
+        <div class="loupe" id="galleryLoupe" aria-hidden="true" hidden></div>
+      </div>
+      <div class="gallery-thumbs" id="galleryThumbs" role="group" aria-label="Photos du bijou" hidden></div>
+      <div class="gallery-info">
+        <div class="gallery-info-text">
+          <p class="product-name" id="galleryName"></p>
+          <p class="product-price" id="galleryPrice"></p>
+        </div>
+        <div class="gallery-actions">
+          <button type="button" class="fav-btn fav-btn--inline" id="galleryFav" data-fav="" data-fav-name="" aria-pressed="false" aria-label="Ajouter à ma sélection"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 21s-7-4.4-9.3-9.1C1.1 8.5 3.1 5 6.5 5c2 0 3.6 1.1 5.5 3.2C13.9 6.1 15.5 5 17.5 5c3.4 0 5.4 3.5 3.8 6.9C19 16.6 12 21 12 21z"/></svg></button>
+          <a class="btn btn-primary" id="galleryReserveBtn" target="_blank" rel="noopener">Réserver</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ MA SÉLECTION (pastille flottante + tiroir) ============ -->
+  <button type="button" class="sel-pill" id="selPill" aria-haspopup="dialog" aria-controls="selDrawer" hidden><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 21s-7-4.4-9.3-9.1C1.1 8.5 3.1 5 6.5 5c2 0 3.6 1.1 5.5 3.2C13.9 6.1 15.5 5 17.5 5c3.4 0 5.4 3.5 3.8 6.9C19 16.6 12 21 12 21z"/></svg><span>Ma sélection (<span id="selCount">0</span>)</span></button>
+  <div class="sel-overlay" id="selOverlay" hidden>
+    <aside class="sel-drawer" id="selDrawer" role="dialog" aria-modal="true" aria-labelledby="selTitle" tabindex="-1">
+      <div class="sel-head">
+        <h2 class="sel-title" id="selTitle">Ma sélection</h2>
+        <button type="button" class="sel-close" id="selClose" aria-label="Fermer"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+      </div>
+      <ul class="sel-list" id="selList"></ul>
+      <div class="sel-foot">
+        <div class="sel-note" id="selNote" aria-live="polite"></div>
+        <a class="btn btn-primary sel-send" id="selSend" target="_blank" rel="noopener">Envoyer ma sélection sur WhatsApp</a>
+      </div>
+    </aside>
+  </div>
+
+  <!-- ============ FOOTER ============ -->
+  <footer>
+    <div class="footer-brand">
+      <svg class="ks-mark" viewBox="160 40 460 540" xmlns="http://www.w3.org/2000/svg">
+        <path d="M 181,124 L 185,122 L 193,120 L 194,119 L 197,119 L 198,118 L 204,118 L 205,117 L 212,117 L 213,116 L 263,116 L 264,117 L 283,117 L 284,118 L 319,118 L 320,117 L 331,117 L 332,116 L 344,115 L 345,114 L 349,114 L 350,113 L 353,113 L 354,112 L 360,112 L 364,116" stroke-width="4.0"/>
+        <path d="M 232,358 L 232,364 L 233,365 L 233,368 L 234,369 L 234,371 L 235,372 L 235,374 L 237,378 L 239,380 L 241,384 L 250,393 L 251,393 L 256,397 L 258,397 L 262,399 L 265,399 L 266,400 L 287,400 L 288,399 L 296,397 L 304,393 L 306,391 L 309,390 L 311,388 L 315,386 L 328,373 L 328,372 L 334,365 L 335,362 L 338,359 L 339,356 L 341,354 L 342,350 L 349,337 L 349,335 L 352,330 L 352,328 L 354,324 L 355,317 L 356,316 L 357,310 L 358,309 L 359,303 L 360,302 L 360,298 L 361,297 L 361,291 L 362,290 L 362,286 L 363,285 L 364,270 L 366,267" stroke-width="6.39"/>
+        <path d="M 364,116 L 364,175 L 365,176 L 365,207 L 366,208 L 365,265 L 366,266" stroke-width="16.0"/>
+        <path d="M 367,102 L 366,103 L 365,115 L 364,116" stroke-width="15.98"/>
+        <path d="M 367,267 L 375,267" stroke-width="18.0"/>
+        <path d="M 367,101 L 367,98 L 368,97 L 368,89 L 370,85 L 371,78 L 374,74 L 377,68 L 380,65 L 382,64 L 385,64 L 386,63 L 388,64 L 393,64 L 395,65 L 399,69 L 399,71 L 400,72 L 400,77 L 399,78 L 399,81 L 396,87 L 385,98 L 383,98 L 380,101 L 377,101 L 376,102 L 368,102" stroke-width="7.6"/>
+        <path d="M 376,266 L 393,250 L 393,249 L 401,240 L 405,233 L 408,230 L 413,220 L 416,217 L 418,212 L 420,210 L 423,204 L 424,200 L 426,198 L 429,192 L 429,190 L 434,181 L 434,179 L 438,172 L 438,170 L 446,154 L 446,152 L 448,149 L 448,147 L 458,127 L 458,125 L 460,123 L 460,121 L 463,115 L 465,113 L 465,111 L 469,103 L 471,101 L 473,96 L 475,94 L 478,88 L 484,81 L 484,80 L 492,72 L 493,72 L 495,70 L 501,67 L 503,67 L 504,66 L 509,66 L 510,67 L 516,68 L 520,71 L 523,77 L 523,79 L 524,80 L 525,88" stroke-width="11.59"/>
+        <path d="M 493,392 L 491,394 L 479,394 L 478,393 L 474,393 L 473,392 L 471,392 L 463,388 L 461,386 L 458,385 L 451,379 L 450,379 L 429,358 L 429,357 L 425,353 L 425,352 L 422,349 L 422,348 L 414,337 L 406,321 L 404,319 L 380,271 L 376,267" stroke-width="14.0"/>
+        <path d="M 499,392 L 494,392" stroke-width="19.38"/>
+        <path d="M 499,392 L 504,387 L 510,385 L 534,361 L 534,360 L 539,355 L 539,354 L 546,346 L 546,345 L 550,340 L 552,335 L 555,332 L 558,325 L 560,323 L 561,318 L 563,316 L 565,312 L 565,310 L 567,307 L 568,301 L 570,298 L 570,296 L 572,292 L 572,287 L 573,286 L 573,282 L 574,281 L 574,266 L 573,265 L 573,261 L 569,254 L 564,250 L 562,250 L 561,249 L 557,249 L 556,248 L 550,248 L 549,249 L 544,249 L 543,250 L 541,250 L 538,252 L 534,253 L 532,255 L 528,257 L 525,260 L 524,260 L 511,273 L 511,274 L 503,284 L 497,296 L 497,298 L 494,303 L 494,305 L 493,306 L 493,308 L 491,312 L 491,316 L 490,317 L 490,321 L 489,322 L 489,327 L 488,328 L 488,333 L 487,334 L 487,362 L 488,363 L 489,373 L 490,374 L 490,377 L 491,378 L 491,381 L 492,382 L 492,388 L 493,389 L 493,391" stroke-width="14.39"/>
+        <path d="M 528,448 L 526,445 L 526,442 L 524,440 L 522,435 L 520,433 L 516,425 L 512,420 L 508,412 L 504,407 L 501,401 L 501,397 L 500,396 L 500,393 L 499,392" stroke-width="15.18"/>
+        <path d="M 530,449 L 536,443 L 541,442 L 549,436 L 552,435 L 554,433 L 557,432 L 564,427 L 569,425 L 571,423 L 587,415 L 589,415 L 592,413 L 594,413 L 599,409" stroke-width="4.39"/>
+        <path d="M 530,449 L 532,451 L 532,457 L 533,458 L 533,461 L 534,462 L 534,465 L 535,466 L 535,469 L 536,470 L 536,491 L 535,492 L 535,498 L 534,499 L 534,502 L 531,507 L 530,512 L 525,522 L 520,528 L 518,532 L 505,544 L 504,544 L 496,550 L 490,553 L 488,553 L 484,555 L 481,555 L 480,556 L 475,556 L 474,557 L 465,557 L 464,556 L 459,556 L 458,555 L 454,554 L 448,548 L 446,544 L 446,541 L 445,540 L 445,529 L 446,528 L 446,524 L 448,520 L 450,518 L 450,516 L 453,513 L 453,512 L 459,505 L 459,504 L 482,482 L 483,482 L 487,478 L 488,478 L 492,474 L 496,472 L 503,466 L 504,466 L 506,464 L 513,460 L 516,457 L 520,455 L 522,455 L 528,449" stroke-width="8.0"/>
+      </svg>
+      <span class="footer-meta">Klinic Studio — Lash and Piercing</span>
+    </div>
+    <a id="footerPhone" href="#" class="footer-meta link-inherit"></a>
+  </footer>
+
+<script type="module">
+  // ============ FIREBASE ============
+  // TODO: remplacer par la config réelle du projet Firebase de Klinic Studio (Firestore, mode test au départ)
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import { getFirestore, collection, doc, onSnapshot, addDoc, getDoc, serverTimestamp, query, where, limit } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyDXiqSkn6-3JZb71Qr-j97idNvGbd3lGLM",
+    authDomain: "klinic-studio.firebaseapp.com",
+    projectId: "klinic-studio",
+    storageBucket: "klinic-studio.firebasestorage.app",
+    messagingSenderId: "234909068692",
+    appId: "1:234909068692:web:fb4a50d6eed566c970f381"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  const WA_NUMBER = "2290153384118"; // valeur par défaut, remplaçable via les réglages (ks_settings/public)
+  let waNumber = WA_NUMBER;
+
+  function waLink(message){
+    return "https://wa.me/" + waNumber + "?text=" + encodeURIComponent(message);
+  }
+
+  const MSG_QUESTION = "Bonjour Klinic Studio, j'ai une question.";
+  const MSG_NOTIFY = "Bonjour Klinic Studio, je souhaite être prévenue de l'ouverture du studio.";
+  const DEFAULT_ORDER_TEMPLATE = "Bonjour Klinic Studio, je souhaite commander : {nom} ({prix})";
+
+  const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
+  // ---- ZONES : objet unique réutilisé partout (services, filtres, formulaire de rendez-vous) ----
+  const ZONES = [
+    { id: 'oreille', label: 'Oreille', cats: ['Hélix', 'Tragus', 'Surface Tragus', 'Industriel', 'Lobe', 'Rook', 'Conch', 'Daith', 'Flat'] },
+    { id: 'nez', label: 'Nez', cats: ['Septum', 'Narine'] },
+    { id: 'bouche-visage', label: 'Bouche et visage', cats: ['Langue', 'Smiley'] },
+    { id: 'corps', label: 'Corps', cats: ['Nombril', 'Téton', 'Micro Dermal'] }
+  ];
+  const BASE_TYPES = ['Piercing', 'Bracelet', 'Chaîne de cheville', 'Bague de pieds'];
+  const BASE_CATEGORIES = ZONES.flatMap(z => z.cats);
+  const zoneById = id => ZONES.find(z => z.id === id);
+
+  // Cartes de services de l'accueil : chacune filtre le catalogue sur une liste de catégories
+  const SERVICES = [
+    { id: 'oreille', label: 'Oreilles', cats: zoneById('oreille').cats },
+    { id: 'nez', label: 'Nez', cats: zoneById('nez').cats },
+    { id: 'nombril', label: 'Nombril', cats: ['Nombril'] },
+    { id: 'bouche-corps', label: 'Bouche et corps', cats: zoneById('bouche-visage').cats.concat(zoneById('corps').cats.filter(c => c !== 'Nombril')) }
+  ];
+
+  // ---- Réglages publics (document ks_settings/public) : tout est faux ou vide par défaut ----
+  const DEFAULT_SETTINGS = { studioOuvert: true, showTemoignages: false, showEquipe: false, engagements: {}, prixParZone: {}, whatsappNumber: '', whatsappTemplate: '', etapes: null };
+  let settings = { ...DEFAULT_SETTINGS };
+
+  function formatPhone(digits){
+    return "+" + (/^229\d{10}$/.test(digits) ? digits.replace(/(\d{3})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/, "$1 $2 $3 $4 $5 $6") : digits);
+  }
+
+  function applyContact(){
+    document.getElementById('waHeaderBtn').href = waLink(MSG_QUESTION);
+    document.getElementById('waContactBtn').href = waLink(MSG_QUESTION);
+    ['contactPhone', 'footerPhone'].forEach(id => {
+      const el = document.getElementById(id);
+      el.textContent = formatPhone(waNumber);
+      el.href = "tel:+" + waNumber;
+    });
+  }
+  applyContact();
+
+  // ---- Catalogue (temps réel) ----
+  let catalogItems = [];
+  let customValues = { types: [], categories: [] };
+  const grid = document.getElementById('catalogGrid');
+  const filterTypeSelect = document.getElementById('filterType');
+  const filterZoneSelect = document.getElementById('filterZone');
+  const filterCategorySelect = document.getElementById('filterCategory');
+  const filterChip = document.getElementById('filterChip');
+  const filterChipLabel = document.getElementById('filterChipLabel');
+  let serviceFilter = null; // { label, cats } posé par une carte de service
+
+  function formatPrice(n){
+    return Number(n).toLocaleString('fr-FR') + " FCFA";
+  }
+
+  function orderMessage(item){
+    const template = settings.whatsappTemplate || DEFAULT_ORDER_TEMPLATE;
+    return template.replace(/\{nom\}/g, () => item.name).replace(/\{prix\}/g, () => formatPrice(item.price));
+  }
+
+  function populateFilterOptions(){
+    const currentType = filterTypeSelect.value;
+    const currentZone = filterZoneSelect.value;
+    const currentCat = filterCategorySelect.value;
+
+    filterTypeSelect.innerHTML = '<option value="">Tous les types</option>' +
+      BASE_TYPES.concat(customValues.types).map(v => `<option value="${esc(v)}">${esc(v)}</option>`).join('');
+    filterZoneSelect.innerHTML = '<option value="">Toutes les zones</option>' +
+      ZONES.map(z => `<option value="${z.id}">${esc(z.label)}</option>`).join('');
+    if ([...filterTypeSelect.options].some(o => o.value === currentType)) filterTypeSelect.value = currentType;
+    if ([...filterZoneSelect.options].some(o => o.value === currentZone)) filterZoneSelect.value = currentZone;
+
+    // Les catégories proposées suivent la zone choisie ; sans zone, toutes (y compris celles validées dans l'admin)
+    const zone = zoneById(filterZoneSelect.value);
+    const cats = zone ? zone.cats : BASE_CATEGORIES.concat(customValues.categories);
+    filterCategorySelect.innerHTML = '<option value="">Toutes les catégories</option>' +
+      cats.map(v => `<option value="${esc(v)}">${esc(v)}</option>`).join('');
+    if ([...filterCategorySelect.options].some(o => o.value === currentCat)) filterCategorySelect.value = currentCat;
+    updateCategoryFilterVisibility();
+  }
+
+  function updateCategoryFilterVisibility(){
+    const showPiercingFilters = filterTypeSelect.value === '' || filterTypeSelect.value === 'Piercing';
+    filterZoneSelect.hidden = !showPiercingFilters;
+    filterCategorySelect.hidden = !showPiercingFilters;
+    if (!showPiercingFilters){ filterZoneSelect.value = ''; filterCategorySelect.value = ''; }
+  }
+
+  // Liste de catégories à appliquer : catégorie choisie, sinon zone choisie, sinon carte de service
+  function activeCats(){
+    if (filterCategorySelect.value) return [filterCategorySelect.value];
+    const zone = zoneById(filterZoneSelect.value);
+    if (zone) return zone.cats;
+    return serviceFilter ? serviceFilter.cats : null;
+  }
+
+  function clearServiceFilter(){
+    serviceFilter = null;
+    filterChip.hidden = true;
+  }
+
+  function applyServiceFilter(serviceId){
+    const svc = SERVICES.find(s => s.id === serviceId);
+    if (!svc) return;
+    serviceFilter = { label: svc.label, cats: svc.cats };
+    if (filterTypeSelect.value && filterTypeSelect.value !== 'Piercing') filterTypeSelect.value = ''; // les zones ne concernent que les piercings
+    filterZoneSelect.value = '';
+    populateFilterOptions();
+    filterCategorySelect.value = '';
+    filterChipLabel.textContent = 'Zone : ' + svc.label;
+    filterChip.hidden = false;
+    renderCatalog();
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    document.getElementById('bijoux').scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'start' });
+  }
+
+  filterTypeSelect.addEventListener('change', () => { clearServiceFilter(); updateCategoryFilterVisibility(); renderCatalog(); });
+  filterZoneSelect.addEventListener('change', () => { clearServiceFilter(); filterCategorySelect.value = ''; populateFilterOptions(); renderCatalog(); });
+  document.getElementById('filterChipClear').addEventListener('click', () => { clearServiceFilter(); renderCatalog(); });
+  populateFilterOptions();
+
+  function renderCatalog(){
+    const type = filterTypeSelect.value;
+    const cats = activeCats();
+    const mat = document.getElementById('filterMaterial').value;
+    const budget = document.getElementById('filterBudget').value;
+
+    let items = catalogItems.slice();
+    if (type) items = items.filter(i => (i.type || 'Piercing') === type);
+    if (cats) items = items.filter(i => cats.includes(i.category));
+    if (mat) items = items.filter(i => i.material === mat);
+    if (budget) items = items.filter(i => Number(i.price) <= Number(budget));
+
+    // Les bijoux mis en avant apparaissent en premier
+    items.sort((a, b) => (b.featured ? 1 : 0) - (a.featured ? 1 : 0));
+
+    if (!items.length){
+      grid.innerHTML = '<div class="catalog-empty">Aucun bijou ne correspond à votre recherche. Contactez-nous directement.</div>';
+      return;
+    }
+
+    grid.innerHTML = items.map(item => {
+      const available = item.available !== false;
+      return `
+      <div class="product-card">
+        <div class="product-media">
+          <div class="product-photo shine ${available ? '' : 'is-unavailable'}" data-open="${esc(item.id)}" role="button" tabindex="0" aria-label="Voir les photos : ${esc(item.name)}">
+            ${item.coverThumb ? `<img src="${esc(item.coverThumb)}" alt="" loading="lazy">` : '<span class="ph-fallback">Photo à venir</span>'}
+            ${item.photoCount > 1 ? `<span class="product-photo-count">1/${item.photoCount}</span>` : ''}
+            ${!available ? '<span class="unavailable-badge">Actuellement indisponible</span>' : ''}
+          </div>
+          <button type="button" class="fav-btn" data-fav="${esc(item.id)}" data-fav-name="${esc(item.name)}" aria-pressed="false" aria-label="Ajouter à ma sélection : ${esc(item.name)}">${ICON_HEART}</button>
+        </div>
+        <div class="product-info">
+          <p class="product-name" data-open="${esc(item.id)}">${esc(item.name)}</p>
+          <p class="product-meta">${esc([(item.type || 'Piercing'), item.category, item.material].filter(Boolean).join(' · '))}</p>
+          <p class="product-price">${formatPrice(item.price)}</p>
+          ${available
+            ? `<a class="product-choose" target="_blank" rel="noopener" href="${esc(waLink(orderMessage(item)))}">Réserver</a>`
+            : `<span class="product-choose is-disabled">Indisponible</span>`}
+        </div>
+      </div>
+    `;
+    }).join('');
+
+    grid.querySelectorAll('[data-open]').forEach(el => {
+      el.addEventListener('click', () => openGallery(el.dataset.open));
+      if (el.getAttribute('role') === 'button'){
+        el.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); openGallery(el.dataset.open); }
+        });
+      }
+    });
+    refreshFavUI();
+  }
+
+  function renderFeaturedStrip(){
+    const section = document.getElementById('coups-de-coeur');
+    const strip = document.getElementById('featuredStrip');
+    const featured = catalogItems.filter(i => i.featured && i.available !== false);
+    if (!featured.length){
+      section.hidden = true;
+      return;
+    }
+    section.hidden = false;
+    strip.innerHTML = featured.map(item => `
+      <div class="featured-card shine" data-open="${esc(item.id)}" role="button" tabindex="0" aria-label="Voir les photos : ${esc(item.name)}">
+        ${item.coverThumb ? `<img src="${esc(item.coverThumb)}" alt="" loading="lazy">` : ''}
+        <div class="fc-info">
+          <p class="fc-name">${item.name}</p>
+          <p class="fc-price">${formatPrice(item.price)}</p>
+        </div>
+      </div>
+    `).join('');
+    strip.querySelectorAll('[data-open]').forEach(el => {
+      el.addEventListener('click', () => openGallery(el.dataset.open));
+      el.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); openGallery(el.dataset.open); }
+      });
+    });
+  }
+
+  onSnapshot(collection(db, "ks_catalog_items"), (snap) => {
+    catalogItems = snap.docs.map(d => d.data());
+    pruneFavorites();
+    renderCatalog();
+    renderFeaturedStrip();
+  }, (err) => {
+    console.warn("Catalogue Firestore indisponible pour le moment :", err.message);
+    grid.innerHTML = '<div class="catalog-empty">Impossible de charger le catalogue pour le moment. Réessayez dans quelques instants ou contactez-nous directement sur WhatsApp.</div>';
+  });
+
+  onSnapshot(doc(db, "ks_custom_values", "lists"), (snap) => {
+    customValues = snap.exists() ? { types: snap.data().types || [], categories: snap.data().categories || [] } : { types: [], categories: [] };
+    populateFilterOptions();
+    renderCatalog();
+  }, (err) => console.warn("Valeurs personnalisées indisponibles :", err.message));
+
+  filterCategorySelect.addEventListener('change', () => { clearServiceFilter(); renderCatalog(); });
+  ['filterMaterial', 'filterBudget'].forEach(id => {
+    document.getElementById(id).addEventListener('change', renderCatalog);
+  });
+
+  // ---- Fenêtres (dialogues) : focus piégé, Échap, retour du focus, page inerte derrière ----
+  const FOCUSABLE = 'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
+  const dialogStack = [];
+
+  function visibleFocusables(root){
+    return [...root.querySelectorAll(FOCUSABLE)].filter(el =>
+      !el.hidden && !el.closest('[hidden]') && el.getAttribute('aria-disabled') !== 'true' && el.getClientRects().length > 0);
+  }
+
+  function activateDialog(dialogEl, closeFn){
+    const opener = document.activeElement;
+    let openerKey = '';
+    if (opener && opener.dataset){
+      if (opener.dataset.open) openerKey = '[data-open="' + opener.dataset.open + '"]';
+      else if (opener.id) openerKey = '#' + opener.id;
+    }
+    const entry = { dialogEl, closeFn, opener, openerKey, inerted: [] };
+    // La page derrière devient inerte : ni focus clavier, ni lecture par les lecteurs d'écran
+    [...document.body.children].forEach(el => {
+      if (el === dialogEl || el.contains(dialogEl) || /^(SCRIPT|STYLE|LINK)$/.test(el.tagName) || el.inert) return;
+      el.inert = true;
+      entry.inerted.push(el);
+    });
+    dialogStack.push(entry);
+    setTimeout(() => {
+      const first = dialogEl.querySelector('[data-autofocus]') || visibleFocusables(dialogEl)[0] || dialogEl;
+      first.focus({ preventScroll: true });
+    }, 0);
+  }
+
+  function deactivateDialog(dialogEl){
+    const idx = dialogStack.findIndex(d => d.dialogEl === dialogEl);
+    if (idx === -1) return;
+    const entry = dialogStack.splice(idx, 1)[0];
+    entry.inerted.forEach(el => { el.inert = false; });
+    // Le focus retourne à l'élément qui avait ouvert la fenêtre (retrouvé même si le catalogue a été redessiné)
+    const target = (entry.opener && entry.opener.isConnected) ? entry.opener : (entry.openerKey ? document.querySelector(entry.openerKey) : null);
+    if (target && target.focus) target.focus({ preventScroll: true });
+  }
+
+  // ---- Galerie produit (fenêtre de détail) ----
+  const galleryOverlay = document.getElementById('galleryOverlay');
+  const galleryDialog = document.getElementById('galleryDialog');
+  const galleryTrack = document.getElementById('galleryTrack');
+  const galleryCounter = document.getElementById('galleryCounter');
+  const galleryThumbs = document.getElementById('galleryThumbs');
+  const galleryPrevBtn = document.getElementById('galleryPrev');
+  const galleryNextBtn = document.getElementById('galleryNext');
+  const trackWrap = document.getElementById('galleryTrackWrap');
+  const loupe = document.getElementById('galleryLoupe');
+  const galleryFavBtn = document.getElementById('galleryFav');
+
+  const galleryCache = new Map(); // évite de re-télécharger la galerie complète d'un article déjà consulté
+  let galleryPhotos = [];
+  let galleryIndex = 0;
+  let galleryMountedSet = new Set(); // slides déjà hydratées avec leur <img> (chargement progressif)
+
+  function mountSlide(i){
+    if (galleryMountedSet.has(i)) return;
+    const wrap = galleryTrack.children[i];
+    if (!wrap) return;
+    const photo = galleryPhotos[i];
+    const isMobile = window.innerWidth < 768;
+    const src = isMobile ? (photo.fullSmall || photo.full || photo.thumb) : (photo.fullLarge || photo.full || photo.thumb);
+    const img = document.createElement('img');
+    img.loading = 'lazy';
+    img.alt = document.getElementById('galleryName').textContent + ' — photo ' + (i + 1) + ' sur ' + galleryPhotos.length;
+    img.draggable = false;
+    img.src = src;
+    wrap.appendChild(img);
+    galleryMountedSet.add(i);
+  }
+
+  function renderThumbs(){
+    galleryThumbs.hidden = galleryPhotos.length < 2;
+    galleryThumbs.innerHTML = galleryPhotos.map((p, i) =>
+      `<button type="button" class="gallery-thumb" data-thumb="${i}" aria-label="Photo ${i + 1} sur ${galleryPhotos.length}"><img src="${esc(p.thumb || p.fullSmall || '')}" alt="" loading="lazy"></button>`
+    ).join('');
+  }
+
+  function scrollThumbIntoView(btn){
+    if (!galleryThumbs.scrollTo) return;
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    galleryThumbs.scrollTo({ left: btn.offsetLeft - (galleryThumbs.clientWidth - btn.offsetWidth) / 2, behavior: reduced ? 'auto' : 'smooth' });
+  }
+
+  function updateGalleryUI(){
+    galleryTrack.style.transform = `translateX(-${galleryIndex * 100}%)`;
+    // charge la photo courante + les voisines immédiates seulement (chargement progressif)
+    mountSlide(galleryIndex);
+    if (galleryIndex > 0) mountSlide(galleryIndex - 1);
+    if (galleryIndex < galleryPhotos.length - 1) mountSlide(galleryIndex + 1);
+
+    const multi = galleryPhotos.length > 1;
+    galleryCounter.hidden = !multi;
+    galleryPrevBtn.hidden = !multi;
+    galleryNextBtn.hidden = !multi;
+    if (multi){
+      galleryCounter.textContent = `${galleryIndex + 1}/${galleryPhotos.length}`;
+      galleryThumbs.querySelectorAll('.gallery-thumb').forEach((b, i) => {
+        const active = i === galleryIndex;
+        b.classList.toggle('active', active);
+        if (active){ b.setAttribute('aria-current', 'true'); scrollThumbIntoView(b); }
+        else b.removeAttribute('aria-current');
+      });
+    }
+    hideLoupe();
+  }
+
+  function goTo(i){
+    galleryIndex = Math.max(0, Math.min(galleryPhotos.length - 1, i));
+    updateGalleryUI();
+  }
+
+  galleryPrevBtn.addEventListener('click', () => goTo(galleryIndex - 1));
+  galleryNextBtn.addEventListener('click', () => goTo(galleryIndex + 1));
+  galleryThumbs.addEventListener('click', (e) => {
+    const b = e.target.closest('[data-thumb]');
+    if (b) goTo(Number(b.dataset.thumb));
+  });
+
+  async function openGallery(itemId){
+    const item = catalogItems.find(i => i.id === itemId);
+    if (!item) return;
+
+    document.getElementById('galleryName').textContent = item.name;
+    document.getElementById('galleryPrice').textContent = formatPrice(item.price);
+    galleryFavBtn.dataset.fav = item.id;
+    galleryFavBtn.dataset.favName = item.name;
+    refreshFavUI();
+
+    const reserveBtn = document.getElementById('galleryReserveBtn');
+    const available = item.available !== false;
+    if (available){
+      reserveBtn.href = waLink(orderMessage(item));
+      reserveBtn.textContent = 'Réserver';
+      reserveBtn.classList.remove('is-disabled');
+      reserveBtn.removeAttribute('aria-disabled');
+    } else {
+      reserveBtn.removeAttribute('href');
+      reserveBtn.textContent = 'Actuellement indisponible';
+      reserveBtn.classList.add('is-disabled');
+      reserveBtn.setAttribute('aria-disabled', 'true');
+    }
+
+    galleryTrack.innerHTML = '<div class="gslide"><span class="ph-fallback">Chargement…</span></div>';
+    galleryThumbs.hidden = true;
+    galleryCounter.hidden = true;
+    galleryPrevBtn.hidden = true;
+    galleryNextBtn.hidden = true;
+    galleryOverlay.classList.add('show');
+    document.body.style.overflow = 'hidden';
+    document.body.classList.add('gallery-open');
+    activateDialog(galleryDialog, closeGallery);
+
+    async function fetchGalleryPhotos(){
+      const snap = await getDoc(doc(db, "ks_catalog_items", itemId, "meta", "gallery"));
+      return (snap.exists() && Array.isArray(snap.data().photos) && snap.data().photos.length)
+        ? snap.data().photos
+        : null;
+    }
+
+    try {
+      const expectedCount = item.photoCount || 1;
+      let photos = galleryCache.get(itemId);
+
+      // Le cache est ignoré s'il contient moins de photos que ce que le catalogue annonce
+      // (ex. des photos ajoutées après une première consultation dans la même session).
+      if (!photos || photos.length < expectedCount){
+        photos = await fetchGalleryPhotos();
+        if ((!photos || photos.length < expectedCount)){
+          // Nouvelle tentative après un court délai, au cas où l'écriture Firestore
+          // (juste après un ajout depuis l'admin) n'aurait pas encore fini de se propager.
+          await new Promise(r => setTimeout(r, 450));
+          photos = await fetchGalleryPhotos();
+        }
+        if (!photos) photos = [{ thumb: item.coverThumb, fullSmall: item.coverThumb, fullLarge: item.coverThumb }];
+        galleryCache.set(itemId, photos);
+      }
+      galleryPhotos = photos;
+      galleryMountedSet = new Set();
+      galleryIndex = 0;
+
+      galleryTrack.innerHTML = galleryPhotos.map(() => '<div class="gslide"></div>').join('');
+      renderThumbs();
+      updateGalleryUI();
+    } catch(err){
+      galleryTrack.innerHTML = `<div class="gslide"><span class="ph-fallback">Impossible de charger les photos.</span></div>`;
+      console.warn("Galerie indisponible :", err.message);
+    }
+  }
+
+  function closeGallery(){
+    galleryOverlay.classList.remove('show');
+    document.body.style.overflow = '';
+    document.body.classList.remove('gallery-open');
+    hideLoupe();
+    deactivateDialog(galleryDialog);
+  }
+  document.getElementById('galleryClose').addEventListener('click', closeGallery);
+  galleryOverlay.addEventListener('click', (e) => { if (e.target === galleryOverlay) closeGallery(); });
+
+  // ---- Loupe ronde : suit la souris (ordinateur), appui maintenu (tactile) ----
+  const LOUPE_ZOOM = 2.6;
+  const LONG_PRESS_MS = 350;
+  let loupeActive = false;
+  let suppressClickUntil = 0;
+
+  function hideLoupe(){
+    loupe.hidden = true;
+    loupe.dataset.src = '';
+  }
+
+  function showLoupeAt(clientX, clientY, lifted){
+    const slide = galleryTrack.children[galleryIndex];
+    const img = slide ? slide.querySelector('img') : null;
+    if (!img || !img.naturalWidth) return hideLoupe();
+
+    // Zone réellement occupée par la photo (object-fit: contain laisse des bandes noires)
+    const box = img.getBoundingClientRect();
+    const scale = Math.min(box.width / img.naturalWidth, box.height / img.naturalHeight);
+    const rw = img.naturalWidth * scale;
+    const rh = img.naturalHeight * scale;
+    const ox = box.left + (box.width - rw) / 2;
+    const oy = box.top + (box.height - rh) / 2;
+    const px = clientX - ox;
+    const py = clientY - oy;
+    if (px < 0 || py < 0 || px > rw || py > rh) return hideLoupe();
+
+    loupe.hidden = false;
+    const size = loupe.offsetWidth || 140;
+    const src = img.currentSrc || img.src;
+    if (loupe.dataset.src !== src){
+      loupe.dataset.src = src;
+      loupe.style.backgroundImage = 'url("' + src.replace(/"/g, '%22') + '")';
+      // Version la plus grande si elle est différente de celle affichée (chargée seulement à ce moment-là)
+      const big = galleryPhotos[galleryIndex] && galleryPhotos[galleryIndex].fullLarge;
+      if (big && big !== src){
+        const pre = new Image();
+        pre.onload = () => {
+          if (!loupe.hidden && loupe.dataset.src === src) loupe.style.backgroundImage = 'url("' + big.replace(/"/g, '%22') + '")';
+        };
+        pre.src = big;
+      }
+    }
+    loupe.style.backgroundSize = (rw * LOUPE_ZOOM) + 'px ' + (rh * LOUPE_ZOOM) + 'px';
+    loupe.style.backgroundPosition = (size / 2 - px * LOUPE_ZOOM) + 'px ' + (size / 2 - py * LOUPE_ZOOM) + 'px';
+
+    // Cercle centré sur le curseur ; au doigt, relevé au-dessus pour rester visible
+    const wrap = trackWrap.getBoundingClientRect();
+    const lift = lifted ? size * 0.8 : 0;
+    loupe.style.left = Math.max(0, Math.min(wrap.width - size, clientX - wrap.left - size / 2)) + 'px';
+    loupe.style.top = Math.max(0, Math.min(wrap.height - size, clientY - wrap.top - size / 2 - lift)) + 'px';
+  }
+
+  trackWrap.addEventListener('pointermove', (e) => {
+    if (e.pointerType !== 'mouse') return;
+    if (e.target.closest('.gallery-arrow, .gallery-counter')) return hideLoupe();
+    showLoupeAt(e.clientX, e.clientY, false);
+  });
+  trackWrap.addEventListener('pointerleave', (e) => { if (e.pointerType === 'mouse') hideLoupe(); });
+  trackWrap.addEventListener('contextmenu', (e) => e.preventDefault()); // pas de menu « enregistrer l'image » à l'appui maintenu
+
+  // ---- Toucher : tiers droit/gauche, glissement, appui maintenu ----
+  let touchStartX = null;
+  let pressStart = null;
+  let pressTimer = null;
+
+  trackWrap.addEventListener('touchstart', (e) => {
+    clearTimeout(pressTimer);
+    if (e.touches.length !== 1){ pressStart = null; return; }
+    const t = e.touches[0];
+    touchStartX = t.clientX;
+    pressStart = { x: t.clientX, y: t.clientY };
+    pressTimer = setTimeout(() => {
+      loupeActive = true;
+      showLoupeAt(pressStart.x, pressStart.y, true);
+    }, LONG_PRESS_MS);
+  }, { passive: true });
+
+  trackWrap.addEventListener('touchmove', (e) => {
+    const t = e.touches[0];
+    if (loupeActive){
+      e.preventDefault(); // la loupe se déplace avec le doigt, sans faire défiler ni changer de photo
+      showLoupeAt(t.clientX, t.clientY, true);
+      return;
+    }
+    if (pressStart && Math.hypot(t.clientX - pressStart.x, t.clientY - pressStart.y) > 10) clearTimeout(pressTimer);
+  }, { passive: false });
+
+  trackWrap.addEventListener('touchend', (e) => {
+    clearTimeout(pressTimer);
+    if (loupeActive){
+      loupeActive = false;
+      hideLoupe();
+      suppressClickUntil = Date.now() + 450; // le relâchement ne doit pas compter comme un toucher sur un tiers
+      touchStartX = null;
+      return;
+    }
+    if (touchStartX === null) return;
+    const delta = e.changedTouches[0].clientX - touchStartX;
+    if (Math.abs(delta) > 40){
+      if (delta < 0) goTo(galleryIndex + 1);
+      else goTo(galleryIndex - 1);
+    }
+    touchStartX = null;
+  }, { passive: true });
+
+  trackWrap.addEventListener('touchcancel', () => {
+    clearTimeout(pressTimer);
+    loupeActive = false;
+    hideLoupe();
+    touchStartX = null;
+  }, { passive: true });
+
+  // Toucher (ou clic) sur le tiers droit = photo suivante, tiers gauche = précédente
+  trackWrap.addEventListener('click', (e) => {
+    if (Date.now() < suppressClickUntil) return;
+    if (e.target.closest('.gallery-arrow, .gallery-counter')) return;
+    if (galleryPhotos.length < 2) return;
+    const rect = trackWrap.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    if (x > rect.width * 2 / 3) goTo(galleryIndex + 1);
+    else if (x < rect.width / 3) goTo(galleryIndex - 1);
+  });
+
+  // Clavier : Échap ferme la fenêtre du dessus, Tab reste à l'intérieur, flèches = photo précédente/suivante
+  document.addEventListener('keydown', (e) => {
+    const top = dialogStack[dialogStack.length - 1];
+    if (!top) return;
+    if (e.key === 'Escape'){ e.preventDefault(); top.closeFn(); return; }
+    if (e.key === 'Tab'){
+      const focusables = visibleFocusables(top.dialogEl);
+      if (!focusables.length){ e.preventDefault(); top.dialogEl.focus(); return; }
+      const first = focusables[0];
+      const last = focusables[focusables.length - 1];
+      const current = document.activeElement;
+      if (e.shiftKey && (current === first || current === top.dialogEl)){ e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && current === last){ e.preventDefault(); first.focus(); }
+      return;
+    }
+    if (top.dialogEl === galleryDialog){
+      if (e.key === 'ArrowRight') goTo(galleryIndex + 1);
+      if (e.key === 'ArrowLeft') goTo(galleryIndex - 1);
+    }
+  });
+
+  // ============ FAVORIS, « MA SÉLECTION » ET ÉCLATS ============
+  const ICON_HEART = '<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 21s-7-4.4-9.3-9.1C1.1 8.5 3.1 5 6.5 5c2 0 3.6 1.1 5.5 3.2C13.9 6.1 15.5 5 17.5 5c3.4 0 5.4 3.5 3.8 6.9C19 16.6 12 21 12 21z"/></svg>';
+  const ICON_CLOSE = '<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6L6 18"/></svg>';
+  const FAV_KEY = 'ks_favoris_v1';
+  const MAX_WA_ITEMS = 15;
+
+  const selPill = document.getElementById('selPill');
+  const selCount = document.getElementById('selCount');
+  const selOverlay = document.getElementById('selOverlay');
+  const selDrawer = document.getElementById('selDrawer');
+  const selList = document.getElementById('selList');
+  const selNote = document.getElementById('selNote');
+  const selSend = document.getElementById('selSend');
+  const selClose = document.getElementById('selClose');
+
+  // Favoris : identifiants de bijoux gardés sur l'appareil (localStorage), aucun compte
+  let favorites = [];
+  try {
+    const raw = JSON.parse(localStorage.getItem(FAV_KEY) || '[]');
+    favorites = Array.isArray(raw) ? raw.filter(x => typeof x === 'string').slice(0, 200) : [];
+  } catch(e){ favorites = []; }
+
+  function saveFavs(){ try { localStorage.setItem(FAV_KEY, JSON.stringify(favorites)); } catch(e){} }
+  const isFav = id => favorites.includes(id);
+
+  function toggleFav(id){
+    favorites = isFav(id) ? favorites.filter(x => x !== id) : favorites.concat(id);
+    saveFavs();
+    refreshFavUI();
+  }
+
+  // Appelé quand le catalogue vient d'être chargé : un bijou supprimé disparaît des favoris sans bruit
+  function pruneFavorites(){
+    const before = favorites.length;
+    favorites = favorites.filter(id => catalogItems.some(i => i.id === id));
+    if (favorites.length !== before) saveFavs();
+  }
+
+  function refreshFavUI(){
+    document.querySelectorAll('[data-fav]').forEach(b => {
+      if (!b.dataset.fav) return;
+      const on = isFav(b.dataset.fav);
+      b.classList.toggle('is-on', on);
+      b.setAttribute('aria-pressed', on ? 'true' : 'false');
+      b.setAttribute('aria-label', (on ? 'Retirer de ma sélection : ' : 'Ajouter à ma sélection : ') + (b.dataset.favName || ''));
+    });
+    selCount.textContent = favorites.length;
+    selPill.hidden = favorites.length === 0;
+    if (!selOverlay.hidden) renderSelection();
+  }
+
+  document.addEventListener('click', (e) => {
+    const btn = e.target.closest('[data-fav]');
+    if (btn && btn.dataset.fav){ e.preventDefault(); toggleFav(btn.dataset.fav); }
+  });
+
+  // Libellé « Oreille · Hélix » ; pour un bijou sans zone (bracelet…), son type
+  function placeLabel(item){
+    if (item.category){
+      const zone = ZONES.find(z => z.cats.includes(item.category));
+      return zone ? zone.label + ' · ' + item.category : item.category;
+    }
+    return item.type || 'Piercing';
+  }
+
+  function selectionMessage(items){
+    const lines = items.map((it, i) => (i + 1) + '. ' + it.name + ' — ' + placeLabel(it) + ' — ' + formatPrice(it.price));
+    return "Bonjour Klinic Studio, voici ma sélection :\n" + lines.join("\n");
+  }
+
+  function renderSelection(){
+    const hadFocus = selDrawer.contains(document.activeElement);
+    const items = favorites.map(id => catalogItems.find(i => i.id === id)).filter(Boolean);
+    selList.innerHTML = items.map(item => {
+      const available = item.available !== false;
+      return `<li class="sel-item${available ? '' : ' is-off'}">
+        ${item.coverThumb ? `<img src="${esc(item.coverThumb)}" alt="">` : '<span class="sel-noimg"></span>'}
+        <div class="sel-text">
+          <p class="sel-name">${esc(item.name)}</p>
+          <p class="sel-meta">${esc(placeLabel(item))}${available ? '' : ' · indisponible'}</p>
+          <p class="sel-price">${formatPrice(item.price)}</p>
+        </div>
+        <button type="button" class="sel-remove" data-fav="${esc(item.id)}" data-fav-name="${esc(item.name)}" aria-label="Retirer de ma sélection : ${esc(item.name)}">${ICON_CLOSE}</button>
+      </li>`;
+    }).join('');
+
+    const orderable = items.filter(i => i.available !== false);
+    const included = orderable.slice(0, MAX_WA_ITEMS);
+    const notes = [];
+    if (!items.length) notes.push(favorites.length ? 'Chargement de votre sélection…' : 'Votre sélection est vide. Touchez le cœur d\u2019un bijou pour l\u2019ajouter.');
+    const unavailable = items.length - orderable.length;
+    if (unavailable > 0) notes.push(unavailable + (unavailable > 1 ? ' articles indisponibles ne seront pas inclus' : ' article indisponible ne sera pas inclus') + ' dans le message.');
+    if (orderable.length > MAX_WA_ITEMS) notes.push('Le message contient les ' + MAX_WA_ITEMS + ' premiers articles ; les autres restent dans votre sélection, vous pourrez les envoyer dans un second message.');
+    selNote.innerHTML = notes.map(n => '<p>' + esc(n) + '</p>').join('');
+
+    if (included.length){
+      selSend.href = waLink(selectionMessage(included));
+      selSend.classList.remove('is-disabled');
+      selSend.removeAttribute('aria-disabled');
+    } else {
+      selSend.removeAttribute('href');
+      selSend.classList.add('is-disabled');
+      selSend.setAttribute('aria-disabled', 'true');
+    }
+
+    // Après le retrait d'un article, le focus ne doit pas se perdre
+    if (hadFocus && !selDrawer.contains(document.activeElement)){
+      (selList.querySelector('.sel-remove') || selClose).focus({ preventScroll: true });
+    }
+  }
+
+  function openSelection(){
+    if (!selOverlay.hidden) return;
+    selOverlay.hidden = false;
+    renderSelection();
+    document.body.classList.add('sel-open');
+    document.body.style.overflow = 'hidden';
+    requestAnimationFrame(() => selOverlay.classList.add('open'));
+    activateDialog(selDrawer, closeSelection);
+  }
+
+  function closeSelection(){
+    selOverlay.classList.remove('open');
+    document.body.classList.remove('sel-open');
+    document.body.style.overflow = '';
+    deactivateDialog(selDrawer);
+    setTimeout(() => { selOverlay.hidden = true; }, 220);
+  }
+
+  selPill.addEventListener('click', openSelection);
+  selClose.addEventListener('click', closeSelection);
+  selOverlay.addEventListener('click', (e) => { if (e.target === selOverlay) closeSelection(); });
+
+  // ---- Éclats : reflet diagonal + étoiles, rejoués au toucher (au survol, c'est le CSS) ----
+  document.querySelectorAll('.service-photo').forEach(el => el.classList.add('shine'));
+  document.addEventListener('touchstart', (e) => {
+    const el = e.target.closest ? e.target.closest('.shine') : null;
+    if (!el) return;
+    el.classList.remove('is-shining');
+    void el.offsetWidth;
+    el.classList.add('is-shining');
+    setTimeout(() => el.classList.remove('is-shining'), 1000);
+  }, { passive: true });
+
+  refreshFavUI();
+
+  // ---- Formulaire de rendez-vous ----
+  const rdvForm = document.getElementById('rdvForm');
+  const rdvBtn = document.getElementById('rdvSubmitBtn');
+  const rdvConfirm = document.getElementById('rdvConfirm');
+  const rdvError = document.getElementById('rdvError');
+  const rdvZone = document.getElementById('rdvType');   // identifiant conservé : contient maintenant la zone
+  const rdvPlace = document.getElementById('rdvPlace');
+  const rdvPlaceField = document.getElementById('rdvPlaceField');
+  const rdvOther = document.getElementById('rdvOther');
+  const rdvOtherField = document.getElementById('rdvOtherField');
+
+  rdvZone.innerHTML = '<option value="">Sélectionner</option>' +
+    ZONES.map(z => `<option value="${esc(z.label)}">${esc(z.label)}</option>`).join('') +
+    '<option value="Autre">Autre</option>';
+
+  function updateRdvOther(){
+    const needsOther = rdvZone.value === 'Autre' || rdvPlace.value === 'Autre';
+    rdvOtherField.hidden = !needsOther;
+    if (!needsOther) rdvOther.value = '';
+  }
+
+  function updateRdvPlace(){
+    const zone = ZONES.find(z => z.label === rdvZone.value);
+    if (zone){
+      rdvPlace.innerHTML = '<option value="">Sélectionner</option>' +
+        zone.cats.map(c => `<option value="${esc(c)}">${esc(c)}</option>`).join('') +
+        '<option value="Autre">Autre</option>';
+      rdvPlaceField.hidden = false;
+      rdvPlace.required = true;
+    } else {
+      rdvPlace.innerHTML = '';
+      rdvPlaceField.hidden = true;
+      rdvPlace.required = false;
+    }
+    updateRdvOther();
+  }
+  rdvZone.addEventListener('change', updateRdvPlace);
+  rdvPlace.addEventListener('change', updateRdvOther);
+
+  rdvForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    rdvError.hidden = true;
+    rdvConfirm.classList.remove('show');
+    rdvBtn.disabled = true;
+    rdvBtn.textContent = "Envoi en cours…";
+
+    const zone = rdvZone.value;
+    const other = rdvOther.value.trim();
+    let emplacement = rdvPlace.value;
+    if (zone === 'Autre') emplacement = other;
+    else if (emplacement === 'Autre') emplacement = other || 'Autre';
+
+    const payload = {
+      name: document.getElementById('rdvName').value.trim(),
+      phone: document.getElementById('rdvPhone').value.trim(),
+      zone,
+      emplacement,
+      // champ déjà lu par l'espace admin : libellé lisible « zone · emplacement »
+      piercingType: [zone, emplacement].filter(Boolean).join(' · '),
+      requestedDateTime: document.getElementById('rdvDate').value,
+      status: "Nouveau",
+      createdAt: serverTimestamp()
+    };
+
+    try {
+      await addDoc(collection(db, "ks_appointments"), payload);
+      rdvForm.reset();
+      updateRdvPlace();
+      rdvConfirm.classList.add('show');
+    } catch(err){
+      console.error(err);
+      rdvError.textContent = "L'envoi n'a pas abouti. Réessayez, ou écrivez-nous directement sur WhatsApp.";
+      rdvError.hidden = false;
+    } finally {
+      rdvBtn.disabled = false;
+      rdvBtn.textContent = "Envoyer ma demande";
+    }
+  });
+  // ============ RÉGLAGES PUBLICS, CONTENUS ET SECTIONS CONDITIONNELLES ============
+  const SETTINGS_CACHE_KEY = 'ks_settings_cache_v2';
+  try { localStorage.removeItem('ks_settings_cache_v1'); } catch(e){}
+
+  const HERO_SUB_OPEN = "Découvrez notre collection de bijoux de piercing et prenez rendez-vous pour votre prochain piercing.";
+  const HERO_SUB_CLOSED = "Découvrez nos bijoux de piercing et soyez prévenue dès l'ouverture du studio pour prendre rendez-vous.";
+
+  const heroSub = document.getElementById('heroSub');
+  const heroCta = document.getElementById('heroSecondaryCta');
+  const mobileCtaMain = document.getElementById('mobileCtaMain');
+  const mobileCtaLabel = document.getElementById('mobileCtaMainLabel');
+  const rdvTitle = document.getElementById('rdvTitle');
+  const rdvNote = document.getElementById('rdvNote');
+  const rdvSteps = document.getElementById('rdvSteps');
+  const rdvClosed = document.getElementById('rdvClosed');
+  const rdvNotifyBtn = document.getElementById('rdvNotifyBtn');
+  const trustGrid = document.getElementById('trustGrid');
+  const stepsBlock = document.getElementById('stepsBlock');
+  const stepsList = document.getElementById('stepsList');
+
+  // Engagements affichables : rien n'est affiché tant que l'admin ne l'a pas activé (settings.engagements.<id> === true)
+  const ENGAGEMENTS = [
+    { id: 'sterilise', title: 'Matériel stérilisé', text: 'Chaque bijou et chaque aiguille sont à usage unique, ouverts devant vous pour votre tranquillité.',
+      icon: '<path d="M12 2l7 3v6c0 5-3 8.5-7 11-4-2.5-7-6-7-11V5l7-3z"/><path d="M9 12l2 2 4-4"/>' },
+    { id: 'perceur-forme', title: 'Perceur formé', text: 'Un geste précis et minutieux, encadré par une vraie expérience du piercing.',
+      icon: '<circle cx="12" cy="8" r="3.5"/><path d="M5 21c1.5-4 4.5-6 7-6s5.5 2 7 6"/>' },
+    { id: 'reponse-rapide', title: 'On vous répond sur WhatsApp', text: 'Une question sur un bijou, une zone ou un rendez-vous ? Écrivez-nous : nous répondons directement par message.',
+      icon: '<path d="M4 5h16v11H10l-5 4v-4H4z"/>' }
+  ];
+
+  // Étapes du perçage : affichées seulement si le studio est ouvert (textes modifiables via settings.etapes)
+  const ETAPES = [
+    { titre: 'Consultation', texte: 'On échange sur la zone, le style et le bijou qui vous correspondent.' },
+    { titre: 'Préparation', texte: 'On prépare la zone et le matériel avant de commencer.' },
+    { titre: 'Perçage', texte: 'Le perçage est réalisé et le bijou est posé.' },
+    { titre: 'Conseils de soin', texte: 'On vous explique comment entretenir votre piercing après la séance.' }
+  ];
+
+  function normalizeSettings(raw){
+    const s = { ...DEFAULT_SETTINGS };
+    if (!raw || typeof raw !== 'object') return s;
+    s.studioOuvert = raw.studioOuvert === undefined ? DEFAULT_SETTINGS.studioOuvert : raw.studioOuvert === true;
+    s.showTemoignages = raw.showTemoignages === true;
+    s.showEquipe = raw.showEquipe === true;
+    s.engagements = (raw.engagements && typeof raw.engagements === 'object') ? raw.engagements : {};
+    s.prixParZone = (raw.prixParZone && typeof raw.prixParZone === 'object') ? raw.prixParZone : {};
+    const digits = String(raw.whatsappNumber || '').replace(/\D/g, '');
+    s.whatsappNumber = (digits.length >= 8 && digits.length <= 15) ? digits : '';
+    s.whatsappTemplate = typeof raw.whatsappTemplate === 'string' ? raw.whatsappTemplate.slice(0, 400) : '';
+    s.etapes = Array.isArray(raw.etapes) ? raw.etapes.slice(0, 4).map(x => String(x || '')) : null;
+    return s;
+  }
+
+  // Affiche ou masque une section (attribut hidden : elle n'occupe alors aucune place dans la page)
+  function toggleSection(section, visible){
+    if (!section) return;
+    const wasHidden = section.hidden;
+    section.hidden = !visible;
+    if (visible && wasHidden) section.querySelectorAll('.reveal').forEach(el => el.classList.add('in'));
+    syncNavLinks();
+  }
+
+  // Les liens du menu vers une section masquée sont masqués eux aussi
+  function syncNavLinks(){
+    document.querySelectorAll('nav.main-nav a[href^="#"], #mobileNav a[href^="#"]').forEach(a => {
+      const target = document.querySelector(a.getAttribute('href'));
+      a.hidden = !!(target && target.hidden);
+    });
+  }
+
+  function renderStudioState(){
+    const open = settings.studioOuvert === true;
+
+    // Accueil
+    heroSub.textContent = open ? HERO_SUB_OPEN : HERO_SUB_CLOSED;
+    if (open){
+      heroCta.textContent = 'Prendre rendez-vous';
+      heroCta.href = '#rendezvous';
+      heroCta.removeAttribute('target');
+      heroCta.removeAttribute('rel');
+    } else {
+      heroCta.textContent = "Être prévenue de l'ouverture";
+      heroCta.href = waLink(MSG_NOTIFY);
+      heroCta.target = '_blank';
+      heroCta.rel = 'noopener';
+    }
+
+    // Barre d'actions mobile
+    if (open){
+      mobileCtaLabel.textContent = 'Réserver';
+      mobileCtaMain.href = '#rendezvous';
+      mobileCtaMain.removeAttribute('target');
+      mobileCtaMain.removeAttribute('rel');
+    } else {
+      mobileCtaLabel.textContent = 'WhatsApp';
+      mobileCtaMain.href = waLink(MSG_QUESTION);
+      mobileCtaMain.target = '_blank';
+      mobileCtaMain.rel = 'noopener';
+    }
+
+    // Section rendez-vous : formulaire si ouvert, sinon « Ouverture prochaine » + WhatsApp
+    rdvTitle.textContent = open ? 'Réservez votre séance de perçage' : 'Les rendez-vous arrivent bientôt';
+    rdvNote.textContent = open
+      ? 'Choisissez la zone et l\u2019emplacement, indiquez vos disponibilités : nous vous confirmons ensuite le créneau par WhatsApp ou par appel téléphonique.'
+      : 'Le studio n\u2019est pas encore ouvert. Laissez-nous un message pour être prévenue dès l\u2019ouverture.';
+    rdvSteps.hidden = !open;
+    rdvForm.hidden = !open;
+    rdvClosed.hidden = open;
+    rdvNotifyBtn.href = waLink(MSG_NOTIFY);
+  }
+
+  function renderServicePrices(){
+    document.querySelectorAll('[data-service-price]').forEach(el => {
+      const v = Number(settings.prixParZone[el.dataset.servicePrice]);
+      if (Number.isFinite(v) && v > 0){
+        el.textContent = 'À partir de ' + formatPrice(v);
+        el.hidden = false;
+      } else {
+        el.textContent = '';
+        el.hidden = true;
+      }
+    });
+  }
+
+  const stepsObserver = ('IntersectionObserver' in window) ? new IntersectionObserver((entries) => {
+    entries.forEach(en => {
+      if (en.isIntersecting){ en.target.classList.add('in'); stepsObserver.unobserve(en.target); }
+    });
+  }, { threshold: 0.35 }) : null;
+
+  function renderTrust(){
+    const active = ENGAGEMENTS.filter(e => settings.engagements[e.id] === true);
+    trustGrid.innerHTML = active.map(e =>
+      `<article class="trust-card"><svg class="trust-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true" focusable="false">${e.icon}</svg><p class="trust-title">${esc(e.title)}</p><p class="trust-text">${esc(e.text)}</p></article>`
+    ).join('');
+    trustGrid.hidden = active.length === 0;
+
+    const open = settings.studioOuvert === true;
+    stepsBlock.hidden = !open;
+    if (open){
+      stepsList.innerHTML = ETAPES.map((e, i) =>
+        `<li class="step"><span class="step-dot" aria-hidden="true">${i + 1}</span><p class="step-title">${esc(e.titre)}</p><p class="step-text">${esc((settings.etapes && settings.etapes[i]) || e.texte)}</p></li>`
+      ).join('');
+      if (!stepsBlock.classList.contains('in')){
+        if (stepsObserver) stepsObserver.observe(stepsBlock); else stepsBlock.classList.add('in');
+      }
+    }
+    toggleSection(document.getElementById('confiance'), active.length > 0 || open);
+  }
+
+  // ---- Témoignages et équipe : lus seulement s'ils sont activés, et seulement les éléments publiés ----
+  let testimonials = [];
+  let teamMembers = [];
+  let unsubTesti = null;
+  let unsubTeam = null;
+
+  const byRecent = (a, b) => ((b.createdAt && b.createdAt.toMillis ? b.createdAt.toMillis() : 0) - (a.createdAt && a.createdAt.toMillis ? a.createdAt.toMillis() : 0));
+
+  function starsEl(n){
+    const wrap = document.createElement('span');
+    wrap.className = 'testi-stars';
+    wrap.setAttribute('role', 'img');
+    wrap.setAttribute('aria-label', 'Note : ' + n + ' sur 5');
+    wrap.innerHTML = Array.from({ length: 5 }, (_, i) =>
+      `<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 3.5l2.6 5.4 5.9.8-4.3 4.1 1 5.9L12 16.9 6.8 19.7l1-5.9-4.3-4.1 5.9-.8z" fill="${i < n ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>`
+    ).join('');
+    return wrap;
+  }
+
+  function renderTestimonials(){
+    const list = document.getElementById('testiList');
+    const show = settings.showTemoignages === true && testimonials.length > 0;
+    list.replaceChildren();
+    if (show){
+      testimonials.forEach(t => {
+        const card = document.createElement('figure');
+        card.className = 'testi-card';
+        const quote = document.createElement('blockquote');
+        quote.className = 'testi-text';
+        quote.textContent = t.texte;
+        const meta = document.createElement('figcaption');
+        meta.className = 'testi-meta';
+        const name = document.createElement('span');
+        name.textContent = t.prenom;
+        meta.appendChild(name);
+        const note = Math.round(Number(t.note));
+        if (note >= 1 && note <= 5) meta.appendChild(starsEl(note));
+        card.append(quote, meta);
+        list.appendChild(card);
+      });
+    }
+    toggleSection(document.getElementById('temoignages'), show);
+  }
+
+  function renderTeam(){
+    const list = document.getElementById('teamList');
+    const show = settings.showEquipe === true && teamMembers.length > 0;
+    list.replaceChildren();
+    if (show){
+      teamMembers.forEach(m => {
+        const card = document.createElement('article');
+        card.className = 'team-card';
+        if (typeof m.photoUrl === 'string' && m.photoUrl.startsWith('https://')){
+          const photo = document.createElement('div');
+          photo.className = 'team-photo';
+          const img = document.createElement('img');
+          img.src = m.photoUrl;
+          img.alt = 'Photo de ' + m.prenom;
+          img.loading = 'lazy';
+          photo.appendChild(img);
+          card.appendChild(photo);
+        }
+        const body = document.createElement('div');
+        body.className = 'team-body';
+        const name = document.createElement('p');
+        name.className = 'team-name';
+        name.textContent = m.prenom;
+        body.appendChild(name);
+        if (m.role){
+          const role = document.createElement('p');
+          role.className = 'team-role';
+          role.textContent = m.role;
+          body.appendChild(role);
+        }
+        if (m.phrase){
+          const quote = document.createElement('p');
+          quote.className = 'team-quote';
+          quote.textContent = m.phrase;
+          body.appendChild(quote);
+        }
+        card.appendChild(body);
+        list.appendChild(card);
+      });
+    }
+    toggleSection(document.getElementById('equipe'), show);
+  }
+
+  function syncContentSubscriptions(){
+    if (settings.showTemoignages && !unsubTesti){
+      unsubTesti = onSnapshot(query(collection(db, 'ks_temoignages'), where('published', '==', true), limit(12)),
+        (snap) => {
+          testimonials = snap.docs.map(d => d.data()).filter(t => t && t.texte && t.prenom).sort(byRecent);
+          renderTestimonials();
+        },
+        (err) => { console.warn('Témoignages indisponibles :', err.message); testimonials = []; renderTestimonials(); });
+    } else if (!settings.showTemoignages && unsubTesti){
+      unsubTesti(); unsubTesti = null; testimonials = []; renderTestimonials();
+    }
+
+    if (settings.showEquipe && !unsubTeam){
+      unsubTeam = onSnapshot(query(collection(db, 'ks_equipe'), where('published', '==', true), limit(12)),
+        (snap) => {
+          teamMembers = snap.docs.map(d => d.data()).filter(m => m && m.prenom).sort(byRecent);
+          renderTeam();
+        },
+        (err) => { console.warn('Équipe indisponible :', err.message); teamMembers = []; renderTeam(); });
+    } else if (!settings.showEquipe && unsubTeam){
+      unsubTeam(); unsubTeam = null; teamMembers = []; renderTeam();
+    }
+  }
+
+  function applySettings(raw){
+    settings = normalizeSettings(raw);
+    waNumber = settings.whatsappNumber || WA_NUMBER;
+    applyContact();
+    renderStudioState();
+    renderServicePrices();
+    renderTrust();
+    if (catalogItems.length) renderCatalog(); // les liens WhatsApp des fiches suivent le numéro et le modèle de message
+    syncContentSubscriptions();
+    syncNavLinks();
+  }
+
+  // ---- Cartes de services : boutons et images manquantes ----
+  document.querySelectorAll('[data-service-filter]').forEach(btn => {
+    btn.addEventListener('click', () => applyServiceFilter(btn.dataset.serviceFilter));
+  });
+  document.querySelectorAll('.service-photo img').forEach(img => {
+    img.addEventListener('error', () => img.remove()); // sans photo : le fond rose reste
+  });
+
+  // ---- Notre univers : la section n'existe que si au moins 2 visuels sont présents dans assets/ ----
+  function loadUnivers(){
+    const files = ['assets/univers-1.jpg', 'assets/univers-2.jpg', 'assets/univers-3.jpg', 'assets/univers-4.jpg'];
+    Promise.all(files.map(src => new Promise(resolve => {
+      const img = new Image();
+      img.alt = '';
+      img.decoding = 'async';
+      img.onload = () => resolve(img);
+      img.onerror = () => resolve(null);
+      img.src = src;
+    }))).then(imgs => {
+      const ok = imgs.filter(Boolean);
+      if (ok.length < 2) return;
+      const gridEl = document.getElementById('universGrid');
+      ok.forEach(img => {
+        const fig = document.createElement('figure');
+        fig.className = 'univers-item shine';
+        fig.appendChild(img);
+        gridEl.appendChild(fig);
+      });
+      toggleSection(document.getElementById('univers'), true);
+    });
+  }
+  if (document.readyState === 'complete') setTimeout(loadUnivers, 300);
+  else window.addEventListener('load', () => setTimeout(loadUnivers, 300), { once: true });
+
+  // ---- Démarrage : dernier état connu (évite un clignotement), puis réglages en direct ----
+  try {
+    const cached = localStorage.getItem(SETTINGS_CACHE_KEY);
+    applySettings(cached ? JSON.parse(cached) : null);
+  } catch(e){
+    applySettings(null);
+  }
+  onSnapshot(doc(db, 'ks_settings', 'public'), (snap) => {
+    const data = snap.exists() ? snap.data() : null;
+    try { localStorage.setItem(SETTINGS_CACHE_KEY, JSON.stringify(data || {})); } catch(e){}
+    applySettings(data);
+  }, (err) => {
+    console.warn('Réglages indisponibles — valeurs par défaut conservées :', err.message);
+  });
+</script>
+
+<script>
+  // ============ VIDÉO DU HERO ============
+  // La vidéo joue 2 fois puis se fige sur assets/hero-poster.jpg ; bouton « Revoir ».
+  // Pas de lecture automatique en économie de données, connexion très lente ou mouvement réduit.
+  (function(){
+    const frame = document.getElementById('heroFrame');
+    const video = document.getElementById('heroVideo');
+    const poster = document.getElementById('heroPoster');
+    const replay = document.getElementById('heroReplay');
+    const replayLabel = document.getElementById('heroReplayLabel');
+    if (!frame || !video) return;
+
+    const VIDEO_SRC = 'assets/hero-video.mp4';
+    const MAX_PLAYS = 2;
+    let plays = 0;
+    let posterReady = false;
+    let hasPlayed = false;
+    video.muted = true;
+
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
+    function autoplayAllowed(){
+      const c = navigator.connection;
+      const saving = !!(c && (c.saveData || /(^|-)2g$/.test(c.effectiveType || '')));
+      return !reduced.matches && !saving;
+    }
+
+    poster.addEventListener('load', () => { posterReady = true; });
+    poster.addEventListener('error', () => { posterReady = false; });
+    if (poster.complete && poster.naturalWidth > 0) posterReady = true;
+
+    function showStill(){
+      if (posterReady) poster.hidden = false;
+      replayLabel.textContent = hasPlayed ? 'Revoir' : 'Lire la vidéo';
+      replay.hidden = false;
+    }
+
+    function playVideo(){
+      const p = video.play();
+      if (p && typeof p.catch === 'function') p.catch(showStill);
+    }
+
+    function start(){
+      plays = 0;
+      poster.hidden = true;
+      replay.hidden = true;
+      if (!video.getAttribute('src')) video.setAttribute('src', VIDEO_SRC);
+      try { video.currentTime = 0; } catch(e){}
+      playVideo();
+    }
+
+    video.addEventListener('playing', () => { hasPlayed = true; });
+    video.addEventListener('ended', () => {
+      plays += 1;
+      if (plays < MAX_PLAYS){
+        try { video.currentTime = 0; } catch(e){}
+        playVideo();
+      } else {
+        showStill();
+      }
+    });
+    video.addEventListener('error', showStill);
+    replay.addEventListener('click', start);
+
+    if (autoplayAllowed()) start(); else showStill();
+  })();
+
+
+  // ============ SPLASH ============
+  const splash = document.getElementById('splash');
+  let dismissed = false;
+  function dismiss(){
+    if(dismissed) return;
+    dismissed = true;
+    splash.classList.add('hide');
+    setTimeout(() => { splash.style.display = 'none'; }, 750);
+  }
+  const autoTimer = setTimeout(dismiss, 4600);
+  splash.addEventListener('click', () => { clearTimeout(autoTimer); dismiss(); });
+
+  // ============ HEADER SCROLL STATE ============
+  const header = document.getElementById('siteHeader');
+  function onScroll(){
+    header.classList.toggle('scrolled', window.scrollY > 40);
+  }
+  window.addEventListener('scroll', onScroll, { passive:true });
+  onScroll();
+
+  // ============ MOBILE NAV ============
+  const burger = document.getElementById('burgerBtn');
+  const mobileNav = document.getElementById('mobileNav');
+  const mobileOverlay = document.getElementById('mobileOverlay');
+  const mobileClose = document.getElementById('mobileClose');
+  function openMobile(){
+    mobileNav.classList.add('open'); mobileOverlay.classList.add('open');
+    document.body.classList.add('nav-open'); burger.setAttribute('aria-expanded', 'true');
+  }
+  function closeMobile(){
+    mobileNav.classList.remove('open'); mobileOverlay.classList.remove('open');
+    document.body.classList.remove('nav-open'); burger.setAttribute('aria-expanded', 'false');
+  }
+  burger.addEventListener('click', openMobile);
+  mobileClose.addEventListener('click', closeMobile);
+  mobileOverlay.addEventListener('click', closeMobile);
+  mobileNav.querySelectorAll('a').forEach(a => a.addEventListener('click', closeMobile));
+
+  // ============ REVEAL ON SCROLL ============
+  const revealEls = document.querySelectorAll('.reveal');
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting){
+        entry.target.classList.add('in');
+        io.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.15 });
+  revealEls.forEach(el => io.observe(el));
+</script>
+
+</body>
+</html>
